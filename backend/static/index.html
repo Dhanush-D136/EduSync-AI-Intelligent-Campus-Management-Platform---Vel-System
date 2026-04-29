@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vel Tech High Tech Dr. Rangarajan Dr. Sakunthala Engineering College — Smart Attendance System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ===================== RESET & ROOT ===================== */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+:root {
+  --navy:    #0B1F4B;
+  --navy2:   #122368;
+  --blue:    #1A56DB;
+  --blue-l:  #3B82F6;
+  --gold:    #C8922A;
+  --gold-l:  #E8B84B;
+  --gold-bg: #FFF8ED;
+  --white:   #FFFFFF;
+  --off:     #F7F8FC;
+  --gray:    #6B7280;
+  --gray-l:  #E5E7EB;
+  --text:    #1C1F2E;
+  --green:   #059669;
+  --green-l: #D1FAE5;
+  --red:     #DC2626;
+  --red-l:   #FEE2E2;
+  --orange:  #D97706;
+  --orange-l:#FEF3C7;
+  --shadow:  0 4px 24px rgba(11,31,75,0.10);
+  --shadow-lg: 0 12px 48px rgba(11,31,75,0.18);
+  --r:       10px;
+  --r-lg:    16px;
+}
+html { scroll-behavior: smooth; }
+body { font-family:'Source Sans 3',sans-serif; background:var(--off); color:var(--text); }
+h1,h2,h3,h4 { font-family:'Playfair Display',serif; }
+button { font-family:'Source Sans 3',sans-serif; }
+input, select, textarea { font-family:'Source Sans 3',sans-serif; }
+
+/* ===================== PAGES ===================== */
+.page { display:none; min-height:100vh; }
+.page.active { display:block; }
+
+/* ===================== LOADER ===================== */
+#pg-loader {
+  background: var(--navy);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  position:fixed; inset:0; z-index:9999;
+  transition: opacity 0.5s ease;
+}
+.loader-crest {
+  width:80px; height:80px; border-radius:50%;
+  background: linear-gradient(135deg,var(--gold),var(--gold-l));
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem; margin-bottom:20px;
+  box-shadow: 0 0 40px rgba(200,146,42,0.4);
+  animation: loaderPulse 2s ease infinite;
+}
+@keyframes loaderPulse { 0%,100%{box-shadow:0 0 40px rgba(200,146,42,0.4)} 50%{box-shadow:0 0 70px rgba(200,146,42,0.7)} }
+.loader-college-name {
+  font-family:'Playfair Display',serif;
+  color:var(--white); font-size:1.5rem; font-weight:700;
+  text-align:center; margin-bottom:4px;
+  animation: fadeUp 0.6s ease 0.3s both;
+}
+.loader-sub {
+  color:rgba(255,255,255,0.5); font-size:0.82rem;
+  letter-spacing:3px; text-transform:uppercase;
+  animation: fadeUp 0.6s ease 0.5s both;
+  margin-bottom:48px;
+}
+.loader-bar-wrap {
+  width:280px; height:3px;
+  background:rgba(255,255,255,0.1); border-radius:3px;
+  overflow:hidden;
+  animation: fadeUp 0.4s ease 0.6s both;
+}
+.loader-bar-fill {
+  height:100%; width:0;
+  background:linear-gradient(90deg,var(--blue),var(--gold));
+  border-radius:3px;
+  animation: barLoad 2.8s cubic-bezier(0.4,0,0.2,1) 0.7s forwards;
+}
+@keyframes barLoad { to{width:100%} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* ===================== TOPBAR / HEADER ===================== */
+.site-header {
+  background:var(--navy);
+  position:sticky; top:0; z-index:500;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.25);
+}
+.header-top {
+  background:var(--navy2);
+  padding:6px 40px;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:0.72rem; color:rgba(255,255,255,0.55);
+  letter-spacing:0.5px;
+  border-bottom:1px solid rgba(255,255,255,0.05);
+}
+.header-top a { color:var(--gold-l); text-decoration:none; }
+.header-main {
+  display:flex; align-items:center;
+  padding:0 40px;
+  gap:20px;
+}
+.header-logo { display:flex; align-items:center; gap:14px; padding:14px 0; }
+.logo-crest {
+  width:52px; height:52px; border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--gold-l));
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.4rem; flex-shrink:0;
+  box-shadow: 0 4px 12px rgba(200,146,42,0.3);
+}
+.logo-text { flex:1; }
+.logo-name {
+  font-family:'Playfair Display',serif;
+  color:var(--white); font-size:1.15rem; font-weight:700;
+  line-height:1.2;
+}
+.logo-estd { font-size:0.65rem; color:var(--gold-l); letter-spacing:2px; text-transform:uppercase; }
+.header-nav { margin-left:auto; display:flex; align-items:center; gap:4px; }
+.nav-link {
+  color:rgba(255,255,255,0.75);
+  font-size:0.82rem; font-weight:500;
+  padding:8px 14px; border-radius:6px;
+  cursor:pointer; border:none; background:none;
+  transition:all 0.2s;
+}
+.nav-link:hover { color:var(--white); background:rgba(255,255,255,0.08); }
+.nav-link.active { color:var(--gold-l); }
+.btn-login {
+  background:linear-gradient(135deg,var(--gold),var(--gold-l));
+  color:var(--navy); font-size:0.82rem; font-weight:700;
+  padding:8px 20px; border-radius:6px; border:none; cursor:pointer;
+  transition:all 0.2s; margin-left:8px;
+  letter-spacing:0.5px;
+}
+.btn-login:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(200,146,42,0.4); }
+
+/* ===================== HERO ===================== */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 50%, #0d2a6e 100%);
+  padding:80px 40px;
+  position:relative; overflow:hidden;
+}
+.hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(200,146,42,0.08) 0%, transparent 70%),
+              radial-gradient(ellipse 40% 60% at 20% 80%, rgba(26,86,219,0.15) 0%, transparent 70%);
+}
+.hero-grid {
+  max-width:1200px; margin:0 auto;
+  display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;
+  position:relative;
+}
+.hero-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(200,146,42,0.15); border:1px solid rgba(200,146,42,0.3);
+  color:var(--gold-l); font-size:0.75rem; font-weight:600; letter-spacing:1.5px;
+  text-transform:uppercase; padding:6px 14px; border-radius:20px; margin-bottom:20px;
+}
+.hero-badge span { width:6px; height:6px; border-radius:50%; background:var(--gold-l); animation:pulse 2s ease infinite; }
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.hero-title { font-size:2.8rem; font-weight:800; color:var(--white); line-height:1.15; margin-bottom:16px; }
+.hero-title em { color:var(--gold-l); font-style:normal; }
+.hero-desc { color:rgba(255,255,255,0.6); font-size:1rem; line-height:1.7; margin-bottom:32px; font-weight:300; }
+.hero-btns { display:flex; gap:12px; flex-wrap:wrap; }
+.btn-hero-p {
+  background:linear-gradient(135deg,var(--gold),var(--gold-l));
+  color:var(--navy); font-weight:700; font-size:0.9rem;
+  padding:12px 28px; border-radius:8px; border:none; cursor:pointer;
+  transition:all 0.2s;
+}
+.btn-hero-p:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(200,146,42,0.4); }
+.btn-hero-s {
+  background:transparent; color:var(--white); font-weight:600; font-size:0.9rem;
+  padding:12px 28px; border-radius:8px; border:1px solid rgba(255,255,255,0.25); cursor:pointer;
+  transition:all 0.2s;
+}
+.btn-hero-s:hover { background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.4); }
+
+.hero-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.hero-stat-card {
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:var(--r-lg); padding:22px;
+  backdrop-filter:blur(10px);
+  transition:all 0.3s;
+}
+.hero-stat-card:hover { background:rgba(255,255,255,0.1); transform:translateY(-3px); }
+.hero-stat-num { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--gold-l); }
+.hero-stat-label { font-size:0.75rem; color:rgba(255,255,255,0.5); text-transform:uppercase; letter-spacing:1.5px; margin-top:4px; }
+.hero-stat-sub { font-size:0.82rem; color:rgba(255,255,255,0.7); margin-top:6px; font-weight:500; }
+
+/* ===================== NAV PILLS ===================== */
+.portal-nav {
+  background:var(--white);
+  border-bottom:2px solid var(--gray-l);
+  position:sticky; top:84px; z-index:400;
+}
+.portal-nav-inner {
+  max-width:1200px; margin:0 auto;
+  padding:0 40px;
+  display:flex; gap:0;
+}
+.portal-tab {
+  padding:14px 22px; font-size:0.85rem; font-weight:600;
+  color:var(--gray); border-bottom:3px solid transparent;
+  cursor:pointer; transition:all 0.2s; border-radius:0;
+  background:none; border-top:none; border-left:none; border-right:none;
+  margin-bottom:-2px;
+}
+.portal-tab:hover { color:var(--navy); }
+.portal-tab.active { color:var(--navy); border-bottom-color:var(--gold); }
+
+/* ===================== SECTION WRAPPER ===================== */
+.section { padding:56px 40px; }
+.section-inner { max-width:1200px; margin:0 auto; }
+.section-header { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:32px; }
+.section-title { font-size:1.6rem; font-weight:700; color:var(--navy); }
+.section-sub { font-size:0.85rem; color:var(--gray); margin-top:4px; }
+.section-line { width:48px; height:3px; background:var(--gold); border-radius:3px; margin-top:8px; }
+
+/* ===================== CARDS / PANELS ===================== */
+.panel {
+  background:var(--white);
+  border:1px solid var(--gray-l);
+  border-radius:var(--r-lg);
+  overflow:hidden;
+  box-shadow:var(--shadow);
+}
+.panel-header {
+  padding:16px 24px;
+  border-bottom:1px solid var(--gray-l);
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--white);
+}
+.panel-title { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; color:var(--navy); }
+.panel-body { padding:24px; }
+
+/* ===================== STATS BAR ===================== */
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:28px; }
+.stat-box {
+  background:var(--white);
+  border:1px solid var(--gray-l);
+  border-radius:var(--r-lg);
+  padding:22px 24px;
+  box-shadow:var(--shadow);
+  border-top:4px solid var(--accent,var(--blue));
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.stat-box:hover { transform:translateY(-3px); box-shadow:var(--shadow-lg); }
+.stat-box.gold-a { --accent:var(--gold); }
+.stat-box.green-a { --accent:var(--green); }
+.stat-box.red-a { --accent:var(--red); }
+.stat-icon-wrap {
+  width:44px; height:44px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.3rem; margin-bottom:14px;
+  background:var(--icon-bg, #EFF6FF);
+}
+.stat-box.gold-a .stat-icon-wrap { background:#FEF3C7; }
+.stat-box.green-a .stat-icon-wrap { background:#D1FAE5; }
+.stat-box.red-a .stat-icon-wrap { background:#FEE2E2; }
+.stat-num { font-family:'Playfair Display',serif; font-size:2rem; font-weight:700; color:var(--navy); line-height:1; margin-bottom:4px; }
+.stat-label { font-size:0.75rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); font-weight:600; }
+.stat-trend { font-size:0.78rem; color:var(--gray); margin-top:6px; }
+.trend-up { color:var(--green); font-weight:600; }
+.trend-down { color:var(--red); font-weight:600; }
+
+/* ===================== BUTTONS ===================== */
+.btn { display:inline-flex; align-items:center; gap:6px; padding:9px 20px; border-radius:var(--r); font-size:0.84rem; font-weight:600; border:none; cursor:pointer; transition:all 0.2s; font-family:inherit; }
+.btn-primary { background:var(--navy); color:var(--white); }
+.btn-primary:hover { background:var(--navy2); transform:translateY(-1px); box-shadow:0 6px 18px rgba(11,31,75,0.3); }
+.btn-gold { background:linear-gradient(135deg,var(--gold),var(--gold-l)); color:var(--navy); font-weight:700; }
+.btn-gold:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(200,146,42,0.4); }
+.btn-outline { background:transparent; color:var(--navy); border:1.5px solid var(--gray-l); }
+.btn-outline:hover { border-color:var(--navy); }
+.btn-sm { padding:6px 14px; font-size:0.78rem; }
+.btn-green { background:var(--green); color:var(--white); }
+.btn-green:hover { background:#047857; }
+.btn-red { background:var(--red); color:var(--white); }
+.btn-red:hover { background:#B91C1C; }
+.btn-ghost { background:var(--off); color:var(--gray); }
+.btn-ghost:hover { background:var(--gray-l); color:var(--text); }
+
+/* ===================== TABLE ===================== */
+.data-table { width:100%; border-collapse:collapse; }
+.data-table th { padding:11px 16px; text-align:left; font-size:0.72rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--gray); font-weight:600; border-bottom:2px solid var(--gray-l); background:var(--off); }
+.data-table td { padding:13px 16px; font-size:0.85rem; border-bottom:1px solid var(--gray-l); color:var(--text); }
+.data-table tr:last-child td { border-bottom:none; }
+.data-table tr:hover td { background:var(--off); }
+.data-table tbody tr { transition:background 0.15s; }
+
+/* ===================== BADGES ===================== */
+.badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; font-size:0.72rem; font-weight:700; }
+.badge-present { background:var(--green-l); color:var(--green); }
+.badge-absent  { background:var(--red-l);   color:var(--red); }
+.badge-od      { background:var(--orange-l);color:var(--orange); }
+.badge-blue    { background:#DBEAFE; color:var(--blue); }
+.badge-navy    { background:#E0E7FF; color:var(--navy); }
+.badge-gold    { background:#FEF3C7; color:var(--gold); }
+
+/* ===================== FORMS ===================== */
+.form-group { margin-bottom:18px; }
+.form-label { display:block; font-size:0.82rem; font-weight:600; color:var(--text); margin-bottom:6px; }
+.form-input {
+  width:100%; padding:10px 14px;
+  border:1.5px solid var(--gray-l); border-radius:var(--r);
+  font-size:0.9rem; color:var(--text); background:var(--white);
+  transition:border-color 0.2s, box-shadow 0.2s;
+  outline:none;
+}
+.form-input:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(26,86,219,0.1); }
+.form-select { width:100%; padding:10px 14px; border:1.5px solid var(--gray-l); border-radius:var(--r); font-size:0.9rem; color:var(--text); background:var(--white); outline:none; cursor:pointer; }
+.form-select:focus { border-color:var(--blue); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+/* ===================== MODAL ===================== */
+.modal-overlay {
+  position:fixed; inset:0; z-index:800;
+  background:rgba(11,31,75,0.5); backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity 0.25s;
+}
+.modal-overlay.open { opacity:1; pointer-events:all; }
+.modal {
+  background:var(--white); border-radius:var(--r-lg);
+  width:90%; max-width:520px;
+  box-shadow:var(--shadow-lg);
+  transform:translateY(20px) scale(0.98);
+  transition:transform 0.25s cubic-bezier(0.16,1,0.3,1);
+  max-height:90vh; overflow-y:auto;
+}
+.modal-overlay.open .modal { transform:none; }
+.modal-header {
+  padding:20px 24px;
+  border-bottom:1px solid var(--gray-l);
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; background:var(--white); z-index:1;
+}
+.modal-title { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--navy); }
+.modal-close { background:var(--off); border:none; width:32px; height:32px; border-radius:6px; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; color:var(--gray); }
+.modal-close:hover { background:var(--gray-l); }
+.modal-body { padding:24px; }
+.modal-footer { padding:16px 24px; border-top:1px solid var(--gray-l); display:flex; justify-content:flex-end; gap:10px; background:var(--off); }
+
+/* ===================== TOAST ===================== */
+#toast-container { position:fixed; bottom:28px; right:28px; z-index:9000; display:flex; flex-direction:column; gap:10px; }
+.toast {
+  background:var(--white); border-radius:var(--r);
+  padding:14px 18px; display:flex; align-items:flex-start; gap:12px;
+  box-shadow:var(--shadow-lg); border-left:4px solid var(--blue);
+  min-width:280px; max-width:360px;
+  animation:toastIn 0.35s cubic-bezier(0.16,1,0.3,1) both;
+}
+.toast.success { border-left-color:var(--green); }
+.toast.error   { border-left-color:var(--red); }
+.toast.warning { border-left-color:var(--orange); }
+@keyframes toastIn { from{opacity:0;transform:translateX(20px)} }
+.toast-icon { font-size:1.1rem; flex-shrink:0; margin-top:1px; }
+.toast-body strong { display:block; font-size:0.85rem; font-weight:700; color:var(--text); }
+.toast-body span { font-size:0.78rem; color:var(--gray); }
+
+/* ===================== LOGIN PAGE ===================== */
+#pg-login {
+  background: linear-gradient(135deg,var(--navy) 0%,#0d2a6e 100%);
+  min-height:100vh; display:flex; flex-direction:column;
+}
+.login-header {
+  padding:20px 40px;
+  display:flex; align-items:center; gap:14px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+.login-header-logo { display:flex; align-items:center; gap:12px; }
+.login-crest { width:44px; height:44px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold-l)); display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+.login-college { font-family:'Playfair Display',serif; color:var(--white); font-size:1rem; font-weight:700; }
+.login-back { margin-left:auto; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:rgba(255,255,255,0.7); padding:7px 16px; border-radius:6px; cursor:pointer; font-size:0.82rem; font-family:inherit; transition:all 0.2s; }
+.login-back:hover { background:rgba(255,255,255,0.15); color:var(--white); }
+.login-body { flex:1; display:flex; align-items:center; justify-content:center; padding:40px; }
+.login-grid { display:grid; grid-template-columns:1fr 1fr; gap:60px; max-width:960px; width:100%; align-items:center; }
+.login-info h2 { font-family:'Playfair Display',serif; font-size:2.2rem; color:var(--white); margin-bottom:12px; }
+.login-info p { color:rgba(255,255,255,0.55); font-size:0.95rem; line-height:1.7; margin-bottom:28px; font-weight:300; }
+.login-feature { display:flex; align-items:center; gap:12px; padding:12px 0; border-top:1px solid rgba(255,255,255,0.08); }
+.login-feature-icon { width:36px; height:36px; border-radius:8px; background:rgba(200,146,42,0.15); display:flex; align-items:center; justify-content:center; font-size:1rem; flex-shrink:0; }
+.login-feature-text { font-size:0.85rem; color:rgba(255,255,255,0.7); }
+.login-feature-text strong { color:var(--white); display:block; font-size:0.88rem; }
+.login-card { background:var(--white); border-radius:var(--r-lg); padding:36px; box-shadow:var(--shadow-lg); }
+.login-card h3 { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--navy); margin-bottom:4px; }
+.login-card p { font-size:0.85rem; color:var(--gray); margin-bottom:28px; }
+.role-tabs { display:flex; background:var(--off); border-radius:8px; padding:4px; gap:4px; margin-bottom:24px; }
+.role-tab { flex:1; padding:8px; text-align:center; border-radius:6px; font-size:0.82rem; font-weight:600; cursor:pointer; border:none; background:none; color:var(--gray); transition:all 0.2s; }
+.role-tab.active { background:var(--white); color:var(--navy); box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+.forgot-link { font-size:0.78rem; color:var(--blue); text-align:right; display:block; margin-top:-10px; margin-bottom:16px; cursor:pointer; }
+.login-hint { background:var(--off); border-radius:8px; padding:12px 14px; font-size:0.78rem; color:var(--gray); margin-top:16px; border-left:3px solid var(--gold); }
+.login-hint strong { color:var(--text); }
+
+/* ===================== MAIN APP ===================== */
+#pg-app { background:var(--off); }
+.app-header {
+  background:var(--navy);
+  position:sticky; top:0; z-index:500;
+  box-shadow:0 2px 20px rgba(0,0,0,0.25);
+}
+.app-header-inner {
+  display:flex; align-items:center; gap:16px;
+  padding:0 32px; height:60px;
+}
+.app-logo { display:flex; align-items:center; gap:10px; }
+.app-crest { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold-l)); display:flex; align-items:center; justify-content:center; font-size:0.9rem; }
+.app-college { font-family:'Playfair Display',serif; color:var(--white); font-size:0.95rem; font-weight:700; }
+.app-nav { display:flex; gap:2px; margin-left:32px; }
+.app-nav-btn { background:none; border:none; color:rgba(255,255,255,0.65); font-size:0.82rem; font-weight:600; padding:6px 14px; border-radius:6px; cursor:pointer; transition:all 0.2s; font-family:inherit; display:flex; align-items:center; gap:6px; }
+.app-nav-btn:hover { color:var(--white); background:rgba(255,255,255,0.08); }
+.app-nav-btn.active { color:var(--gold-l); background:rgba(200,146,42,0.12); }
+.app-header-right { margin-left:auto; display:flex; align-items:center; gap:10px; }
+.user-chip { display:flex; align-items:center; gap:8px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:20px; padding:5px 14px 5px 5px; }
+.user-chip-avatar { width:28px; height:28px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold-l)); display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:700; color:var(--navy); }
+.user-chip-name { font-size:0.82rem; color:var(--white); font-weight:500; }
+.user-chip-role { font-size:0.68rem; color:var(--gold-l); }
+.logout-btn { background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); color:rgba(255,255,255,0.65); padding:6px 12px; border-radius:6px; cursor:pointer; font-size:0.78rem; font-family:inherit; transition:all 0.2s; }
+.logout-btn:hover { background:rgba(255,255,255,0.15); color:var(--white); }
+
+/* ===================== APP TABS ===================== */
+.app-tab { display:none; }
+.app-tab.active { display:block; }
+.content-area { padding:32px; max-width:1400px; margin:0 auto; }
+
+/* ===================== BREADCRUMB ===================== */
+.breadcrumb { display:flex; align-items:center; gap:8px; font-size:0.78rem; color:var(--gray); margin-bottom:24px; }
+.breadcrumb a { color:var(--blue); text-decoration:none; }
+.breadcrumb-sep { color:var(--gray-l); }
+
+/* ===================== CAMERA PORTAL ===================== */
+.camera-container { border-radius:var(--r-lg); overflow:hidden; background:#060810; position:relative; aspect-ratio:16/9; max-height:420px; }
+.camera-bg { position:absolute; inset:0; background: radial-gradient(ellipse 70% 60% at 50% 50%, #0a1030 0%, #030508 100%); }
+.cam-grid { position:absolute; inset:0; background-image: linear-gradient(rgba(26,86,219,0.05) 1px, transparent 1px), linear-gradient(90deg,rgba(26,86,219,0.05) 1px,transparent 1px); background-size:40px 40px; }
+.cam-scan { position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg,transparent,rgba(5,150,105,0.8),transparent); animation:camScan 2.5s ease-in-out infinite; }
+@keyframes camScan { 0%{top:5%;opacity:0} 10%{opacity:1} 90%{opacity:1} 100%{top:95%;opacity:0} }
+.cam-corner { position:absolute; width:20px; height:20px; border-color:rgba(5,150,105,0.7); border-style:solid; }
+.cam-corner.tl{top:10px;left:10px;border-width:2px 0 0 2px}
+.cam-corner.tr{top:10px;right:10px;border-width:2px 2px 0 0}
+.cam-corner.bl{bottom:10px;left:10px;border-width:0 0 2px 2px}
+.cam-corner.br{bottom:10px;right:10px;border-width:0 2px 2px 0}
+.cam-status-bar { position:absolute; top:12px; left:50%; transform:translateX(-50%); display:flex; gap:10px; align-items:center; }
+.cam-live-pill { background:rgba(0,0,0,0.7); border:1px solid rgba(220,38,38,0.6); color:#fff; font-size:0.68rem; font-weight:700; letter-spacing:2px; padding:4px 12px; border-radius:20px; display:flex; align-items:center; gap:6px; }
+.cam-live-dot { width:7px; height:7px; border-radius:50%; background:var(--red); animation:pulse 1s ease infinite; }
+.face-box {
+  position:absolute;
+  border:2px solid var(--green);
+  border-radius:6px;
+  transition:all 0.5s ease;
+}
+.face-box.unknown { border-color:var(--red); }
+.face-box-label {
+  position:absolute; top:-26px; left:0;
+  background:var(--green); color:var(--white);
+  font-size:0.6rem; font-weight:700; padding:2px 8px; border-radius:4px; white-space:nowrap;
+}
+.face-box.unknown .face-box-label { background:var(--red); }
+.face-corner { position:absolute; width:10px; height:10px; border-color:inherit; border-style:solid; }
+.face-corner.tl{top:-1px;left:-1px;border-width:2px 0 0 2px;border-radius:2px 0 0 0}
+.face-corner.tr{top:-1px;right:-1px;border-width:2px 2px 0 0;border-radius:0 2px 0 0}
+.face-corner.bl{bottom:-1px;left:-1px;border-width:0 0 2px 2px;border-radius:0 0 0 2px}
+.face-corner.br{bottom:-1px;right:-1px;border-width:0 2px 2px 0;border-radius:0 0 2px 0}
+.cam-info-bar {
+  position:absolute; bottom:12px; left:12px; right:12px;
+  background:rgba(0,0,0,0.7); border-radius:8px; padding:10px 16px;
+  display:flex; justify-content:space-between; align-items:center; font-size:0.75rem;
+}
+.cam-info-stat { display:flex; align-items:center; gap:6px; color:rgba(255,255,255,0.7); }
+.cam-info-num { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; }
+.cam-info-num.g { color:var(--green); }
+.cam-info-num.r { color:var(--red); }
+.cam-info-num.w { color:var(--white); }
+
+/* ===================== TIMETABLE ===================== */
+.tt-table { width:100%; border-collapse:separate; border-spacing:4px; }
+.tt-table th { font-size:0.72rem; text-transform:uppercase; letter-spacing:1.5px; color:var(--gray); font-weight:600; padding:8px 10px; text-align:center; }
+.tt-cell { padding:12px 8px; border-radius:8px; text-align:center; font-size:0.78rem; font-weight:600; transition:transform 0.15s; cursor:default; }
+.tt-cell:hover { transform:scale(1.03); }
+.tt-cell .subject { font-weight:700; font-size:0.82rem; }
+.tt-cell .room { font-size:0.65rem; opacity:0.7; margin-top:2px; }
+.tt-blue { background:#EFF6FF; color:var(--blue); border:1px solid #BFDBFE; }
+.tt-gold { background:#FEF3C7; color:var(--gold); border:1px solid #FDE68A; }
+.tt-green { background:#D1FAE5; color:var(--green); border:1px solid #A7F3D0; }
+.tt-purple { background:#EDE9FE; color:#7C3AED; border:1px solid #DDD6FE; }
+.tt-red { background:#FEE2E2; color:var(--red); border:1px solid #FECACA; }
+.tt-break { background:var(--off); color:var(--gray); border:1px solid var(--gray-l); font-size:0.7rem; }
+.tt-current { box-shadow:0 0 0 2.5px var(--gold); }
+
+/* ===================== FACE REGISTRATION ===================== */
+.face-reg-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin:16px 0; }
+.face-slot {
+  aspect-ratio:1; border-radius:10px; border:2px dashed var(--gray-l);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-size:0.65rem; color:var(--gray); gap:4px;
+  transition:all 0.3s; position:relative; overflow:hidden;
+}
+.face-slot.captured { border-color:var(--green); background:var(--green-l); }
+.face-slot.captured .slot-icon { font-size:1.5rem; }
+.face-slot.active { border-color:var(--blue); border-style:solid; animation:slotPulse 1s ease infinite; }
+@keyframes slotPulse { 0%,100%{border-color:var(--blue)} 50%{border-color:var(--blue-l)} }
+.slot-num { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; color:var(--gray-l); }
+
+/* ===================== PROGRESS BAR ===================== */
+.progress-wrap { background:var(--gray-l); border-radius:20px; height:8px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:20px; background:linear-gradient(90deg,var(--blue),var(--green)); transition:width 0.5s ease; }
+
+/* ===================== CHART (CSS BAR) ===================== */
+.chart-bars { display:flex; align-items:flex-end; gap:8px; height:120px; padding-bottom:4px; margin-bottom:8px; }
+.chart-bar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; height:100%; justify-content:flex-end; }
+.chart-bar { width:100%; border-radius:4px 4px 0 0; min-height:4px; }
+.chart-bar.present { background:linear-gradient(180deg,var(--green),rgba(5,150,105,0.5)); }
+.chart-bar.absent  { background:linear-gradient(180deg,var(--red),rgba(220,38,38,0.5)); }
+.chart-label { font-size:0.65rem; color:var(--gray); margin-top:4px; }
+.chart-val { font-size:0.65rem; font-weight:700; color:var(--gray); }
+
+/* ===================== FOOTER ===================== */
+.site-footer {
+  background:var(--navy);
+  color:rgba(255,255,255,0.6);
+  padding:48px 40px 24px;
+}
+.footer-grid { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:40px; }
+.footer-brand .brand-name { font-family:'Playfair Display',serif; color:var(--white); font-size:1.2rem; margin-bottom:10px; }
+.footer-brand p { font-size:0.82rem; line-height:1.7; }
+.footer-col h4 { color:var(--white); font-size:0.82rem; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; margin-bottom:14px; }
+.footer-col ul { list-style:none; }
+.footer-col ul li { padding:5px 0; font-size:0.82rem; }
+.footer-col ul li a { color:rgba(255,255,255,0.5); text-decoration:none; transition:color 0.2s; }
+.footer-col ul li a:hover { color:var(--gold-l); }
+.footer-bottom { border-top:1px solid rgba(255,255,255,0.08); padding-top:20px; text-align:center; font-size:0.75rem; max-width:1200px; margin:0 auto; }
+.footer-gold { color:var(--gold-l); }
+
+/* ===================== ANNOUNCE TICKER ===================== */
+.ticker-bar { background:var(--gold); overflow:hidden; padding:7px 0; }
+.ticker-track { display:flex; gap:0; animation:ticker 30s linear infinite; width:max-content; }
+.ticker-track span { white-space:nowrap; font-size:0.78rem; font-weight:600; color:var(--navy); padding:0 40px; }
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ===================== CARD GRID ===================== */
+.feature-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.feature-card {
+  background:var(--white); border:1px solid var(--gray-l);
+  border-radius:var(--r-lg); padding:28px;
+  box-shadow:var(--shadow);
+  transition:transform 0.2s, box-shadow 0.2s;
+}
+.feature-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-lg); }
+.feature-icon { width:52px; height:52px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:16px; }
+.feature-card h3 { font-size:1rem; font-weight:700; color:var(--navy); margin-bottom:8px; }
+.feature-card p { font-size:0.83rem; color:var(--gray); line-height:1.6; }
+
+/* ===================== RISK LIST ===================== */
+.risk-list { display:flex; flex-direction:column; gap:0; }
+.risk-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--gray-l); }
+.risk-row:last-child { border-bottom:none; }
+.risk-pct { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; width:50px; flex-shrink:0; }
+.risk-pct.danger { color:var(--red); }
+.risk-pct.warn { color:var(--orange); }
+.risk-info { flex:1; }
+.risk-name { font-size:0.85rem; font-weight:600; }
+.risk-dept { font-size:0.72rem; color:var(--gray); }
+.risk-bar-wrap { width:80px; background:var(--gray-l); height:5px; border-radius:3px; overflow:hidden; }
+.risk-bar-inner { height:100%; border-radius:3px; }
+.risk-bar-inner.danger { background:var(--red); }
+.risk-bar-inner.warn { background:var(--orange); }
+
+/* ===================== ANNOUNCEMENT SECTION ===================== */
+.announce-list { display:flex; flex-direction:column; gap:0; }
+.announce-item { display:flex; gap:14px; padding:14px 0; border-bottom:1px solid var(--gray-l); align-items:flex-start; }
+.announce-item:last-child { border-bottom:none; }
+.announce-dot { width:8px; height:8px; border-radius:50%; background:var(--gold); flex-shrink:0; margin-top:6px; }
+.announce-title { font-size:0.88rem; font-weight:600; color:var(--text); margin-bottom:3px; }
+.announce-date { font-size:0.72rem; color:var(--gray); }
+
+/* RESPONSIVE */
+@media(max-width:900px) {
+  .stats-row { grid-template-columns:1fr 1fr; }
+  .hero-grid { grid-template-columns:1fr; }
+  .feature-grid { grid-template-columns:1fr 1fr; }
+  .footer-grid { grid-template-columns:1fr 1fr; }
+  .login-grid { grid-template-columns:1fr; }
+  .login-info { display:none; }
+}
+@media(max-width:600px) {
+  .stats-row { grid-template-columns:1fr 1fr; }
+  .header-main { padding:0 16px; }
+  .section { padding:32px 16px; }
+  .content-area { padding:20px 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== LOADER ========== -->
+<div id="pg-loader">
+  <div class="loader-crest" style="background:transparent;box-shadow:none;border-radius:50%;overflow:hidden;"><img src="/static/logo.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.1)" /></div>
+  <div class="loader-college-name">Vel Tech High Tech Dr. Rangarajan Dr. Sakunthala Engineering College</div>
+  <div class="loader-sub">Autonomous · NAAC A Grade · NBA Accredited</div>
+  <div class="loader-bar-wrap"><div class="loader-bar-fill"></div></div>
+</div>
+
+<!-- ========== HOME PAGE ========== -->
+<div id="pg-home" class="page">
+  <!-- SITE HEADER -->
+  <header class="site-header">
+    <div class="header-top">
+      <span>📍 No.60, Avadi–Vel Tech Road, Avadi, Chennai – 600062, Tamil Nadu</span>
+      <span>📞 044-26840181 &nbsp;|&nbsp; ✉ <a href="#">principal@velhightech.com</a> &nbsp;|&nbsp; Estd. 2002</span>
+    </div>
+    <div class="header-main">
+      <div class="header-logo">
+        <div class="logo-crest" style="background:transparent;border-radius:50%;overflow:hidden;"><img src="/static/logo.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.1)" /></div>
+        <div class="logo-text">
+          <div class="logo-name">Vel Tech High Tech Dr. Rangarajan Dr. Sakunthala Engineering College</div>
+          <div class="logo-estd">Autonomous Institution · Affiliated to Anna University</div>
+        </div>
+      </div>
+      <nav class="header-nav">
+        <button class="nav-link active">Home</button>
+        <button class="nav-link" onclick="window.open('https://www.velhightech.com/academics.html', '_blank')">Academics</button>
+        <button class="nav-link" onclick="window.open('https://www.velhightech.com/research-and-development/', '_blank')">Research</button>
+        <button class="nav-link" onclick="window.open('https://www.velhightech.com/admissions.html', '_blank')">Admissions</button>
+        <button class="nav-link" onclick="window.open('https://www.velhightech.com/about-us.html', '_blank')">About</button>
+        <button class="btn-login" onclick="showPage('pg-login')">🔐 Student / Staff Login</button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- TICKER -->
+  <div class="ticker-bar">
+    <div class="ticker-track">
+      <span>📢 Smart AI Attendance System Now Active for all Departments</span>
+      <span>🏆 NAAC A Grade Accredited Institution</span>
+      <span>📅 Internal Assessment I — May 5–10, 2026</span>
+      <span>🎓 Convocation Ceremony — May 25, 2026</span>
+      <span>⚠️ Students below 75% attendance — Report to HOD immediately</span>
+      <span>📢 Smart AI Attendance System Now Active for all Departments</span>
+      <span>🏆 NAAC A Grade Accredited Institution</span>
+      <span>📅 Internal Assessment I — May 5–10, 2026</span>
+      <span>🎓 Convocation Ceremony — May 25, 2026</span>
+      <span>⚠️ Students below 75% attendance — Report to HOD immediately</span>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-badge"><span></span> AI-Powered Smart Attendance System</div>
+        <h1 class="hero-title">Next-Gen Attendance<br>with <em>Face Recognition</em><br>Technology</h1>
+        <p class="hero-desc">Automated, real-time attendance marking using Computer Vision & Deep Learning. YOLOv8 face detection with FaceNet recognition — accurate to 99%.</p>
+        <div class="hero-btns">
+          <button class="btn-hero-p" onclick="showPage('pg-login')">🔐 Login to Portal</button>
+          <button class="btn-hero-s" onclick="scrollToFeatures()">Explore Features ↓</button>
+        </div>
+      </div>
+      <div>
+        <div class="hero-stats">
+          <div class="hero-stat-card">
+            <div class="hero-stat-num" id="heroTotal">847</div>
+            <div class="hero-stat-label">Students</div>
+            <div class="hero-stat-sub">4 Departments</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="hero-stat-num" id="heroPct">91%</div>
+            <div class="hero-stat-label">Avg Attendance</div>
+            <div class="hero-stat-sub">This Month</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="hero-stat-num">99%</div>
+            <div class="hero-stat-label">AI Accuracy</div>
+            <div class="hero-stat-sub">Face Recognition</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="hero-stat-num">60+</div>
+            <div class="hero-stat-label">Faces/Scan</div>
+            <div class="hero-stat-sub">Simultaneous</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="hero-stat-num">5</div>
+            <div class="hero-stat-label">Day Orders</div>
+            <div class="hero-stat-sub">7-8 Periods</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="hero-stat-num">Real</div>
+            <div class="hero-stat-label">Time Sync</div>
+            <div class="hero-stat-sub">Live Dashboard</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section" id="features-section" style="background:var(--white)">
+    <div class="section-inner">
+      <div class="section-header" style="flex-direction:column;align-items:flex-start">
+        <div class="section-title">System Modules</div>
+        <div class="section-sub">Complete platform for students, faculty, and administrators</div>
+        <div class="section-line"></div>
+      </div>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon" style="background:#EFF6FF">📷</div>
+          <h3>AI Camera Portal</h3>
+          <p>YOLOv8 face detection marks attendance for 60+ students simultaneously. FaceNet embeddings with 99%+ accuracy. Anti-spoofing with blink detection.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:#D1FAE5">👨‍🎓</div>
+          <h3>Student Portal</h3>
+          <p>View attendance by subject, apply for OD/Leave, register face (6 angles), get real-time notifications on approval status, and check timetable.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:#FEF3C7">🛠️</div>
+          <h3>Admin Dashboard</h3>
+          <p>Upload student data via Excel, manage timetables for all Day Orders, approve OD/Leave requests, and export detailed reports as PDF or Excel.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:#EDE9FE">📊</div>
+          <h3>Analytics & Reports</h3>
+          <p>AI-predicted attendance trends, risk student alerts (below 75%), heatmaps, department-wise breakdowns, daily/weekly/monthly reports.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:#FEE2E2">🔔</div>
+          <h3>Smart Notifications</h3>
+          <p>Automated email & SMS alerts for low attendance, OD/Leave approvals, exam schedules. Parents also notified when student is absent.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon" style="background:#ECFDF5">🔐</div>
+          <h3>Secure & Scalable</h3>
+          <p>JWT authentication, role-based access control for students, staff, HOD, and admin. Cloud-ready with audit logs and data encryption.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="brand-name">Vel Tech High Tech Dr. Rangarajan Dr. Sakunthala Engineering College</div>
+        <p>An Autonomous Institution affiliated to Anna University, Chennai. Approved by AICTE, Accredited by NAAC with A Grade and NBA.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#">Home</a></li><li><a href="#">About Vel Tech High Tech</a></li>
+          <li><a href="#">Departments</a></li><li><a href="#">Research</a></li>
+          <li><a href="#">Placements</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Student Services</h4>
+        <ul>
+          <li><a href="#" onclick="showPage('pg-login')">Attendance Portal</a></li>
+          <li><a href="#">Library</a></li><li><a href="#">Fee Payment</a></li>
+          <li><a href="#">Exam Results</a></li><li><a href="#">Hostel</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">📞 044-26840181</a></li>
+          <li><a href="#">✉ principal@velhightech.com</a></li>
+          <li><a href="#">📍 Avadi, Chennai</a></li>
+          <li><a href="#">🌐 www.velhightech.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-gold">© 2026 Vel Tech High Tech Dr. Rangarajan Dr. Sakunthala Engineering College</span> — All Rights Reserved &nbsp;|&nbsp; Smart Attendance System v2.0
+    </div>
+  </footer>
+</div>
+
+<!-- ========== LOGIN PAGE ========== -->
+<div id="pg-login" class="page">
+  <div class="login-header">
+    <div class="login-header-logo">
+      <div class="login-crest" style="background:transparent;border-radius:50%;overflow:hidden;"><img src="/static/logo.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.1)" /></div>
+      <div class="login-college">Vel Tech High Tech Dr. Rangarajan Dr. Sakunthala Engineering College</div>
+    </div>
+    <button class="login-back" onclick="showPage('pg-home')">← Back to Website</button>
+  </div>
+  <div class="login-body">
+    <div class="login-grid">
+      <div class="login-info">
+        <h2>Smart Attendance<br>Management Portal</h2>
+        <p>AI-powered attendance system with real-time face recognition, analytics, and comprehensive reporting for all stakeholders.</p>
+        <div class="login-feature">
+          <div class="login-feature-icon">📷</div>
+          <div class="login-feature-text"><strong>Face Recognition Attendance</strong>YOLOv8 + FaceNet — marks 60+ students in seconds</div>
+        </div>
+        <div class="login-feature">
+          <div class="login-feature-icon">📊</div>
+          <div class="login-feature-text"><strong>Real-Time Analytics</strong>Live dashboards, risk alerts, and PDF/Excel reports</div>
+        </div>
+        <div class="login-feature">
+          <div class="login-feature-icon">🔔</div>
+          <div class="login-feature-text"><strong>Smart Notifications</strong>Instant SMS/Email alerts for low attendance</div>
+        </div>
+      </div>
+      <div class="login-card">
+        <h3>Sign In</h3>
+        <p>Access the Smart Attendance System</p>
+        <div class="role-tabs">
+          <button class="role-tab active" onclick="setRole(this,'student')">👨‍🎓 Student</button>
+          <button class="role-tab" onclick="setRole(this,'staff')">👩‍🏫 Staff</button>
+          <button class="role-tab" onclick="setRole(this,'admin')">🛠️ Admin</button>
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="loginIdLabel">Register Number</label>
+          <input class="form-input" id="loginId" type="text" placeholder="e.g. 21CS041" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input class="form-input" id="loginPwd" type="password" placeholder="Enter your password" />
+        </div>
+        <span class="forgot-link">Forgot password?</span>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px" onclick="doLogin()">Sign In →</button>
+        <div class="login-hint">
+          <strong>Demo Credentials:</strong><br>
+          Student: <strong>21CS041</strong> / <strong>1234</strong><br>
+          Admin: <strong>admin</strong> / <strong>admin123</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MAIN APP ========== -->
+<div id="pg-app" class="page">
+  <!-- APP HEADER -->
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="app-logo">
+        <div class="app-crest" style="background:transparent;border-radius:50%;overflow:hidden;"><img src="/static/logo.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;transform:scale(1.1)" /></div>
+        <div class="app-college">Vel Tech High Tech Smart Attendance</div>
+      </div>
+      <nav class="app-nav" id="appNav">
+        <!-- Filled by JS based on role -->
+      </nav>
+      <div class="app-header-right">
+        <div class="user-chip">
+          <div class="user-chip-avatar" id="userInitials">AK</div>
+          <div>
+            <div class="user-chip-name" id="userName">Arun Kumar</div>
+            <div class="user-chip-role" id="userRole">Student · CSE-B</div>
+          </div>
+        </div>
+        <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- TABS CONTENT -->
+  <div id="appContent"></div>
+</div>
+
+<!-- ========== MODAL ========== -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Modal</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer" id="modalFooter"></div>
+  </div>
+</div>
+
+<!-- ========== TOAST ========== -->
+<div id="toast-container"></div>
+
+<script>
+/* ============================================================
+   DATA STORE
+============================================================ */
+const DB = {
+  currentRole: null,
+  currentUser: null,
+
+  students: [],
+  todayAttendance: [],
+  pendingOD: [],
+
+  timetables: {
+    'AI&DS-1-A': {
+      'DO1': [{sub:'AI101',room:'Lab-1'},{sub:'MA101',room:'H-101'},null,{sub:'PH101',room:'H-102'},{sub:'CS101',room:'Lab-2'},{sub:'CS101',room:'Lab-2'},null],
+      'DO2': [{sub:'MA101',room:'H-101'},{sub:'PH101',room:'H-102'},{sub:'AI101',room:'Lab-1'},null,{sub:'EN101',room:'H-201'},{sub:'CS101',room:'Lab-2'},{sub:'EN101',room:'H-201'}]
+    }
+  },
+  currentDayOrder: 'DO1',
+
+  subjectNames: {
+    'MA3354':'Mathematics IV','CS3351':'Data Structures','CS3352':'DBMS','CS3353':'OS','CS3354':'CN / AI',
+    'AI101':'Intro to AI', 'MA101':'Engg Math I', 'PH101':'Physics', 'CS101':'Python Prog', 'EN101':'English',
+    'null':'Break'
+  },
+
+  weeklyData: []
+};
+
+/* ============================================================
+   PAGE ROUTING
+============================================================ */
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+async function fetchRealData() {
+  try {
+    const stRes = await fetch('/api/students');
+    if(stRes.ok) {
+      const stData = await stRes.json();
+      if(stData.length >= 0) {
+        DB.students = stData.map(s => ({
+          dbId: s.id,
+          id: s.register_number,
+          name: s.name,
+          dept: s.department,
+          year: s.year,
+          section: s.section,
+          face: s.has_face || false,
+          pwd: s.pwd,
+          firstLogin: s.firstLogin,
+          attendance: {overall: 0, subjects: {DS:0,DBMS:0,CN:0,OS:0,AI:0}}
+        }));
+      }
+    }
+    const statRes = await fetch('/api/dashboard/stats');
+    if(statRes.ok) {
+      DB.realStats = await statRes.json();
+    }
+  } catch (e) {
+    console.error("Failed to fetch real data", e);
+  }
+}
+
+/* ============================================================
+   LOGIN
+============================================================ */
+let currentRole = 'student';
+function setRole(btn, role) {
+  document.querySelectorAll('.role-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  currentRole = role;
+  const labels = {student:'Register Number',staff:'Staff ID',admin:'Admin ID'};
+  const holders = {student:'e.g. 21CS041',staff:'e.g. STAFF001',admin:'e.g. admin'};
+  document.getElementById('loginIdLabel').textContent = labels[role];
+  document.getElementById('loginId').placeholder = holders[role];
+}
+
+async function doLogin() {
+  const id = document.getElementById('loginId').value.trim();
+  const pwd = document.getElementById('loginPwd').value.trim();
+  if (!id || !pwd) { showToast('⚠️','Missing fields','Enter ID and password','warning'); return; }
+
+  if (currentRole === 'admin' && id === 'admin' && pwd === 'admin123') {
+    DB.currentRole = 'admin';
+    DB.currentUser = {id:'admin',name:'Dr. Anitha Rajan',role:'Principal / Super Admin',dept:'Admin',initials:'DA'};
+    await fetchRealData();
+    loadApp();
+  } else if (currentRole === 'student') {
+    await fetchRealData();
+    const s = DB.students.find(st => st.id === id && st.pwd === pwd);
+    if (s) {
+      DB.currentRole = 'student';
+      DB.currentUser = {...s, initials: s.name.split(' ').map(w=>w[0]).join('').substring(0,2)};
+      if (s.firstLogin) {
+        promptPasswordChange(s.dbId);
+        return;
+      }
+      loadApp();
+    } else { showToast('❌','Login Failed','Invalid Register Number or Password','error'); }
+  } else if (currentRole === 'staff' && id === 'STAFF001' && pwd === 'staff123') {
+    DB.currentRole = 'staff';
+    DB.currentUser = {id:'STAFF001',name:'Prof. Ramya Devi',role:'Asst. Professor · CSE',dept:'CSE',initials:'RD'};
+    await fetchRealData();
+    loadApp();
+  } else {
+    showToast('❌','Login Failed','Invalid credentials','error');
+  }
+}
+
+let livePollInterval = null;
+
+function doLogout() {
+  if (livePollInterval) { clearInterval(livePollInterval); livePollInterval = null; }
+  DB.currentRole = null; DB.currentUser = null;
+  showPage('pg-home');
+  showToast('✅','Signed Out','You have been logged out successfully','success');
+}
+
+function loadApp() {
+  document.getElementById('userInitials').textContent = DB.currentUser.initials;
+  document.getElementById('userName').textContent = DB.currentUser.name;
+  document.getElementById('userRole').textContent = DB.currentUser.role || (DB.currentUser.dept+' · Sec '+DB.currentUser.section);
+  buildNav();
+  showPage('pg-app');
+  loadTab('dashboard');
+  showToast('✅','Welcome back!',`Signed in as ${DB.currentUser.name}`,'success');
+  
+  if (!livePollInterval) {
+    livePollInterval = setInterval(updateLiveFeed, 3000);
+  }
+}
+
+async function updateLiveFeed() {
+  try {
+    const statRes = await fetch('/api/dashboard/stats');
+    if (statRes.ok) {
+      const data = await statRes.json();
+      DB.realStats = data;
+      DB.todayAttendance = data.recent_attendance || [];
+      
+      // Update DOM
+      const livePres = document.getElementById('livePresentCount');
+      if (livePres) livePres.textContent = data.present;
+      
+      const dashAtt = document.getElementById('dashRecentAtt');
+      if (dashAtt) {
+        const rows = DB.todayAttendance.slice(0,6).map(a => `
+          <tr>
+            <td><span class="badge badge-navy">${a.id}</span></td>
+            <td><strong>${a.name}</strong></td>
+            <td>${a.dept}-${a.section}</td>
+            <td>${a.period}</td>
+            <td><span class="badge badge-present">● ${a.status}</span></td>
+            <td style="color:var(--green);font-weight:600">${a.confidence}%</td>
+            <td style="color:var(--gray);font-size:0.78rem">${a.time}</td>
+          </tr>`).join('');
+        dashAtt.innerHTML = rows || '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--gray)">No attendance records yet</td></tr>';
+      }
+      
+      const camCount = document.getElementById('detectedCount');
+      if (camCount) camCount.textContent = `${DB.todayAttendance.length} Identified`;
+      
+      const camTable = document.getElementById('detectedTable');
+      if (camTable) {
+        const crows = DB.todayAttendance.slice(0,6).map(a=>`<tr>
+          <td style="font-size:0.8rem"><strong>${a.name.split(' ')[0]}</strong></td>
+          <td><span class="badge badge-navy" style="font-size:0.65rem">${a.id}</span></td>
+          <td><span class="badge badge-present" style="font-size:0.65rem">${a.status}</span></td>
+        </tr>`).join('');
+        camTable.innerHTML = crows || '<tr><td colspan="3" style="text-align:center;padding:20px;color:var(--gray)">No students detected in feed yet</td></tr>';
+      }
+      
+      // Update Student Dashboard
+      if (DB.currentRole === 'student' && DB.currentUser) {
+        const studentPres = DB.todayAttendance.some(a => String(a.id).trim() === String(DB.currentUser.id).trim() && a.status === 'Present');
+        if (studentPres) {
+          DB.currentUser.attendance.overall = 100; // Simulated update
+          const pct = document.getElementById('studentOverallPct');
+          if (pct) pct.textContent = '100%';
+          const trnd = document.getElementById('studentOverallTrend');
+          if (trnd) trnd.innerHTML = '<span class="trend-up">✓ Marked Present Today</span>';
+        }
+      }
+    }
+  } catch (e) {
+    console.error("Live feed poll error", e);
+  }
+}
+
+/* ============================================================
+   NAV BUILDER
+============================================================ */
+const navConfig = {
+  admin:   [{id:'dashboard',icon:'⬡',label:'Dashboard'},{id:'camera',icon:'📷',label:'Camera Portal'},{id:'students',icon:'👥',label:'Students'},{id:'timetable',icon:'📅',label:'Timetable'},{id:'od',icon:'📝',label:'OD / Leave'},{id:'reports',icon:'📑',label:'Reports'}],
+  staff:   [{id:'dashboard',icon:'⬡',label:'Dashboard'},{id:'camera',icon:'📷',label:'Mark Attendance'},{id:'timetable',icon:'📅',label:'Timetable'},{id:'od',icon:'📝',label:'OD / Leave'},{id:'reports',icon:'📑',label:'Reports'}],
+  student: [{id:'dashboard',icon:'⬡',label:'Dashboard'},{id:'myattendance',icon:'📊',label:'My Attendance'},{id:'timetable',icon:'📅',label:'Timetable'},{id:'faceregister',icon:'🤖',label:'Face Register'},{id:'od',icon:'📝',label:'Apply OD/Leave'}],
+};
+
+function buildNav() {
+  const nav = document.getElementById('appNav');
+  nav.innerHTML = '';
+  navConfig[DB.currentRole].forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'app-nav-btn';
+    btn.dataset.tab = item.id;
+    btn.innerHTML = `${item.icon} ${item.label}`;
+    btn.onclick = () => loadTab(item.id);
+    nav.appendChild(btn);
+  });
+}
+
+function setNavActive(tabId) {
+  document.querySelectorAll('.app-nav-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.tab === tabId);
+  });
+}
+
+/* ============================================================
+   TAB LOADER
+============================================================ */
+function loadTab(id) {
+  setNavActive(id);
+  if(typeof stopWebcam === 'function') stopWebcam();
+  const content = document.getElementById('appContent');
+  const renderers = {
+    dashboard: renderDashboard,
+    camera: renderCamera,
+    students: renderStudents,
+    timetable: renderTimetable,
+    od: renderOD,
+    reports: renderReports,
+    myattendance: renderMyAttendance,
+    faceregister: renderFaceRegister,
+  };
+  content.innerHTML = (renderers[id] || (() => '<div class="content-area"><p>Coming soon</p></div>'))();
+  if (id === 'camera') initCamera();
+  if (id === 'faceregister') initFaceReg();
+}
+
+/* ============================================================
+   DASHBOARD
+============================================================ */
+function renderDashboard() {
+  const isAdmin = DB.currentRole !== 'student';
+  const u = DB.currentUser;
+  
+  const present = DB.realStats ? DB.realStats.present : DB.todayAttendance.filter(a=>a.status==='Present').length;
+  const absent  = DB.realStats ? DB.realStats.absent : DB.todayAttendance.filter(a=>a.status==='Absent').length;
+  const od      = DB.todayAttendance.filter(a=>a.status==='OD').length;
+  const totalStudents = DB.realStats ? DB.realStats.total : DB.students.length;
+  const accuracy = DB.realStats ? DB.realStats.accuracy : (Math.round(present/totalStudents*100) + '%');
+
+  let statsHtml = isAdmin ? `
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-icon-wrap">👨‍🎓</div>
+        <div class="stat-num">${totalStudents}</div>
+        <div class="stat-label">Total Students</div>
+        <div class="stat-trend">CSE · IT · ECE · EEE</div>
+      </div>
+      <div class="stat-box green-a">
+        <div class="stat-icon-wrap">✅</div>
+        <div class="stat-num" id="livePresentCount">${present}</div>
+        <div class="stat-label">Present Today</div>
+        <div class="stat-trend"><span class="trend-up">↑ ${accuracy}</span> attendance rate</div>
+      </div>
+      <div class="stat-box red-a">
+        <div class="stat-icon-wrap">❌</div>
+        <div class="stat-num">${absent}</div>
+        <div class="stat-label">Absent Today</div>
+        <div class="stat-trend"><span class="trend-down">Updated live</span></div>
+      </div>
+      <div class="stat-box gold-a">
+        <div class="stat-icon-wrap">📋</div>
+        <div class="stat-num">${DB.pendingOD.length}</div>
+        <div class="stat-label">OD/Leave Pending</div>
+        <div class="stat-trend">Awaiting approval</div>
+      </div>
+    </div>` : `
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-icon-wrap">📊</div>
+        <div class="stat-num" id="studentOverallPct">${u.attendance.overall}%</div>
+        <div class="stat-label">Overall Attendance</div>
+        <div class="stat-trend" id="studentOverallTrend">${u.attendance.overall>=75?'<span class="trend-up">✓ Above 75% threshold</span>':'<span class="trend-down">⚠ Below 75% — at risk</span>'}</div>
+      </div>
+      <div class="stat-box green-a">
+        <div class="stat-icon-wrap">✅</div>
+        <div class="stat-num">${Math.max(...Object.values(u.attendance.subjects))}%</div>
+        <div class="stat-label">Best Subject</div>
+        <div class="stat-trend">${Object.entries(u.attendance.subjects).sort((a,b)=>b[1]-a[1])[0][0]}</div>
+      </div>
+      <div class="stat-box red-a">
+        <div class="stat-icon-wrap">⚠️</div>
+        <div class="stat-num">${Math.min(...Object.values(u.attendance.subjects))}%</div>
+        <div class="stat-label">Lowest Subject</div>
+        <div class="stat-trend">${Object.entries(u.attendance.subjects).sort((a,b)=>a[1]-b[1])[0][0]}</div>
+      </div>
+      <div class="stat-box gold-a">
+        <div class="stat-icon-wrap">📋</div>
+        <div class="stat-num">${u.face?'✓':'✗'}</div>
+        <div class="stat-label">Face Registered</div>
+        <div class="stat-trend">${u.face?'AI attendance active':'<span class="trend-down">Register face now</span>'}</div>
+      </div>
+    </div>`;
+
+  const weekBars = DB.weeklyData.length > 0 ? DB.weeklyData.map(d => {
+    const maxH = 100;
+    const pH = Math.round(d.present/850*maxH);
+    const aH = Math.round(d.absent/100*maxH);
+    return `<div class="chart-bar-col">
+      <div class="chart-val">${d.present}</div>
+      <div style="display:flex;align-items:flex-end;gap:2px;height:${maxH}px">
+        <div class="chart-bar present" style="height:${pH}px;width:18px"></div>
+        <div class="chart-bar absent"  style="height:${aH}px;width:18px"></div>
+      </div>
+      <div class="chart-label">${d.day}</div>
+    </div>`;
+  }).join('') : `<div style="text-align:center;color:var(--gray);width:100%;padding:40px 0;">No attendance records yet</div>`;
+
+  const attRows = DB.todayAttendance.slice(0,6).map(a => `
+    <tr>
+      <td><span class="badge badge-navy">${a.id}</span></td>
+      <td><strong>${a.name}</strong></td>
+      <td>${a.dept}-${a.section}</td>
+      <td>${a.period}</td>
+      <td><span class="badge ${a.status==='Present'?'badge-present':a.status==='OD'?'badge-od':'badge-absent'}">● ${a.status}</span></td>
+      <td style="color:${a.confidence?'var(--green)':'var(--gray)'};font-weight:600">${a.confidence?a.confidence+'%':'—'}</td>
+      <td style="color:var(--gray);font-size:0.78rem">${a.time}</td>
+    </tr>`).join('');
+
+  const odRows = DB.pendingOD.slice(0,3).map(o=>`
+    <tr>
+      <td><strong>${o.name}</strong></td>
+      <td><span class="badge badge-navy">${o.studentId}</span></td>
+      <td><span class="badge ${o.type==='OD'?'badge-blue':'badge-gold'}">${o.type}</span></td>
+      <td>${o.date}</td>
+      <td>
+        <button class="btn btn-sm btn-green" onclick="approveOD(${o.id},this)">✓ Approve</button>
+        <button class="btn btn-sm btn-red" style="margin-left:4px" onclick="rejectOD(${o.id},this)">✗ Reject</button>
+      </td>
+    </tr>`).join('');
+
+  return `<div class="content-area">
+    <div class="breadcrumb"><span>🏠 Home</span><span class="breadcrumb-sep">›</span><strong>Dashboard</strong></div>
+    <div style="margin-bottom:24px">
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--navy);margin-bottom:4px">
+        Good ${getGreeting()}, ${DB.currentUser.name.split(' ')[0]}!
+      </h2>
+      <p style="color:var(--gray);font-size:0.85rem">📅 Today: ${new Date().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'})} &nbsp;·&nbsp; Day Order: <strong style="color:var(--gold)">3</strong> &nbsp;·&nbsp; Current Period: <strong style="color:var(--blue)">P5 (11:50 AM – 12:40 PM)</strong></p>
+    </div>
+    ${statsHtml}
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:20px;margin-bottom:20px">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Weekly Attendance Trend</div>
+          <div style="display:flex;gap:10px;align-items:center;font-size:0.72rem;color:var(--gray)">
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--green);border-radius:2px;display:inline-block"></span>Present</span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:10px;background:var(--red);border-radius:2px;display:inline-block"></span>Absent</span>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="chart-bars">${weekBars}</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Dept. Attendance</div>
+          <span class="badge badge-gold">Today</span>
+        </div>
+        <div class="panel-body" style="padding:8px 20px">
+          ${[...new Set(DB.students.map(s=>s.dept))].length > 0 ? [...new Set(DB.students.map(s=>s.dept))].map(d=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray-l)">
+            <span style="font-weight:700;width:60px;font-size:0.85rem">${d}</span>
+            <div class="progress-wrap" style="flex:1"><div class="progress-fill" style="width:0%;background:var(--blue)"></div></div>
+            <span style="font-weight:700;color:var(--blue);width:40px;text-align:right;font-family:'Playfair Display',serif">0%</span>
+          </div>`).join('') : `<div style="text-align:center;color:var(--gray);padding:20px 0;">No departments configured</div>`}
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:20px">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Recent AI-Marked Attendance</div>
+          <button class="btn btn-sm btn-ghost" onclick="loadTab('students')">View All</button>
+        </div>
+        <div class="panel-body" style="padding:0;overflow-x:auto">
+          <table class="data-table">
+            <thead><tr><th>Reg No.</th><th>Name</th><th>Dept</th><th>Period</th><th>Status</th><th>AI Score</th><th>Time</th></tr></thead>
+            <tbody id="dashRecentAtt">${attRows || '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--gray)">No attendance records yet</td></tr>'}</tbody>
+          </table>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">${isAdmin?'⏳ OD/Leave Requests':'⚠️ Risk Students'}</div>
+          ${isAdmin?`<span class="badge badge-absent">${DB.pendingOD.length} Pending</span>`:''}
+        </div>
+        <div class="panel-body" style="padding:${isAdmin?0:'8px 20px'};overflow-x:auto">
+          ${isAdmin ? `<table class="data-table"><thead><tr><th>Name</th><th>ID</th><th>Type</th><th>Date</th><th>Action</th></tr></thead><tbody>${odRows}</tbody></table>`
+          : `<div class="risk-list">${DB.students.filter(s=>s.attendance.overall<75).map(s=>`
+            <div class="risk-row">
+              <div class="risk-pct ${s.attendance.overall<70?'danger':'warn'}">${s.attendance.overall}%</div>
+              <div class="risk-info"><div class="risk-name">${s.name}</div><div class="risk-dept">${s.id} · ${s.dept}</div></div>
+              <div class="risk-bar-wrap"><div class="risk-bar-inner ${s.attendance.overall<70?'danger':'warn'}" style="width:${s.attendance.overall}%"></div></div>
+            </div>`).join('')}</div>`}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   CAMERA PORTAL
+============================================================ */
+function renderCamera() {
+  return `<div class="content-area">
+    <div class="breadcrumb"><span>🏠 Home</span><span class="breadcrumb-sep">›</span><strong>Camera Portal</strong></div>
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:20px;margin-bottom:20px">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">🎥 Live AI Camera Feed — Hall A · CSE-B</div>
+          <div style="display:flex;gap:8px">
+            <span class="badge badge-blue">Period 5 · AI/ML</span>
+            <button class="btn btn-sm btn-outline" onclick="rescanFaces()">🔄 Rescan</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="camera-container" id="cameraView" style="position:relative;">
+            <img src="/api/camera/stream" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0;z-index:5;" />
+            <div class="cam-status-bar" style="z-index:10;position:absolute;">
+              <div class="cam-live-pill"><div class="cam-live-dot"></div>LIVE</div>
+            </div>
+            <div class="cam-info-bar" style="z-index:10;position:absolute;">
+              <div class="cam-info-stat">Real-time Stream</div>
+              <div class="cam-info-stat" style="margin-left:auto">AI Pipeline: <span style="color:var(--green);font-weight:700">ACTIVE</span></div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:16px">
+            <button class="btn btn-primary" onclick="markAllPresent()">✅ Mark All Detected</button>
+            <button class="btn btn-gold" onclick="exportAttendance()">📤 Export CSV</button>
+            <button class="btn btn-ghost">⏸ Pause Feed</button>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">AI Model Status</div></div>
+          <div class="panel-body" style="padding:16px 20px">
+            ${[['YOLOv8 Detection','Active','var(--green)'],['FaceNet Recognition','Active','var(--green)'],['Anti-Spoof Module','Active','var(--green)'],['GPU Acceleration','Active','var(--green)'],['Frame Rate','28 FPS','var(--blue)']].map(([l,v,c])=>`
+            <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--gray-l);font-size:0.82rem">
+              <span style="color:var(--gray)">${l}</span>
+              <span style="font-weight:700;color:${c}">${v}</span>
+            </div>`).join('')}
+          </div>
+        </div>
+        <div class="panel" style="flex:1">
+          <div class="panel-header">
+            <div class="panel-title">Detected Students</div>
+            <span class="badge badge-present" id="detectedCount">0 Identified</span>
+          </div>
+          <div class="panel-body" style="padding:0;overflow-y:auto;max-height:220px">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>ID</th><th>Status</th></tr></thead>
+              <tbody id="detectedTable">
+                <tr><td colspan="3" style="text-align:center;padding:20px;color:var(--gray)">No students detected in feed yet</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+const faceData = [
+  {name:'Arun K.',id:'21CS041',x:'10%',y:'18%',w:68,h:78,ok:true},
+  {name:'Priya S.',id:'21CS022',x:'28%',y:'12%',w:65,h:75,ok:true},
+  {name:'Karthik R.',id:'21CS055',x:'48%',y:'20%',w:70,h:80,ok:true},
+  {name:'Nivetha P.',id:'21CS018',x:'68%',y:'15%',w:65,h:75,ok:true},
+  {name:'Dinesh M.',id:'21CS033',x:'18%',y:'48%',w:68,h:78,ok:true},
+  {name:'Unknown',id:'—',x:'40%',y:'45%',w:65,h:75,ok:false},
+];
+
+function initCamera() {
+  const box = document.getElementById('faceBoxes');
+  if (!box) return;
+  box.innerHTML = faceData.map(f=>`
+    <div class="face-box ${f.ok?'':'unknown'}" style="left:${f.x};top:${f.y};width:${f.w}px;height:${f.h}px">
+      <div class="face-box-label">${f.name} ${f.ok?'✓':''}</div>
+      <div class="face-corner tl"></div><div class="face-corner tr"></div>
+      <div class="face-corner bl"></div><div class="face-corner br"></div>
+    </div>`).join('');
+}
+
+function rescanFaces() {
+  showToast('🔄','Rescanning','AI model rescanning all faces...','');
+  setTimeout(()=>showToast('✅','Scan Complete','6 faces detected, 5 identified','success'),1500);
+}
+function markAllPresent() { showToast('✅','Attendance Marked','5 students marked present for Period 5','success'); }
+function exportAttendance() { showToast('📤','Exported','Attendance CSV downloaded','success'); }
+
+/* ============================================================
+   STUDENTS
+============================================================ */
+function renderStudents() {
+  const rows = DB.students.map(s=>`
+    <tr>
+      <td><span class="badge badge-navy">${s.id}</span></td>
+      <td><strong>${s.name}</strong></td>
+      <td>${s.dept}</td>
+      <td>${s.year}</td>
+      <td>${s.section}</td>
+      <td><span class="badge ${s.face?'badge-present':'badge-absent'}">${s.face?'✓ Registered':'✗ Pending'}</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="progress-wrap" style="width:70px"><div class="progress-fill" style="width:${s.attendance.overall}%;background:${s.attendance.overall>=75?'var(--green)':'var(--red)'}"></div></div>
+          <strong style="color:${s.attendance.overall>=75?'var(--green)':'var(--red)'};font-size:0.82rem">${s.attendance.overall}%</strong>
+        </div>
+      </td>
+      <td>
+        <button class="btn btn-sm btn-outline" onclick="viewStudent('${s.id}')">View</button>
+        <button class="btn btn-sm btn-red" onclick="deleteStudent(${s.dbId})">Delete</button>
+      </td>
+    </tr>`).join('');
+
+  return `<div class="content-area">
+    <div class="breadcrumb"><span>🏠 Home</span><span class="breadcrumb-sep">›</span><strong>Student Management</strong></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <div><h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--navy)">Student Directory</h2><p style="color:var(--gray);font-size:0.85rem">${DB.students.length} students registered</p></div>
+      <div style="display:flex;gap:10px">
+        <input class="form-input" style="width:220px" placeholder="🔍 Search by name or ID..." oninput="filterStudents(this.value)">
+        <select class="form-select" style="width:120px"><option>All Depts</option><option>CSE</option><option>IT</option><option>ECE</option><option>EEE</option></select>
+        <button class="btn btn-gold" onclick="showUploadModal()">⬆ Upload Excel</button>
+        <button class="btn btn-primary" onclick="showAddStudentModal()">+ Add Student</button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">All Students</div>
+        <div style="font-size:0.78rem;color:var(--gray)">${DB.students.filter(s=>s.attendance.overall>=75).length} above threshold · ${DB.students.filter(s=>s.attendance.overall<75).length} at risk</div>
+      </div>
+      <div class="panel-body" style="padding:0;overflow-x:auto">
+        <table class="data-table" id="studentTable">
+          <thead><tr><th>Reg No.</th><th>Name</th><th>Dept</th><th>Year</th><th>Section</th><th>Face Status</th><th>Attendance</th><th>Actions</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+function filterStudents(q) {
+  const rows = document.querySelectorAll('#studentTable tbody tr');
+  rows.forEach(r => { r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase())?'':'none'; });
+}
+
+function viewStudent(id) {
+  const s = DB.students.find(x=>x.id===id);
+  if (!s) return;
+  const subRows = Object.entries(s.attendance.subjects).map(([sub,pct])=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--gray-l)">
+      <span style="width:80px;font-weight:700;font-size:0.82rem">${sub}</span>
+      <div class="progress-wrap" style="flex:1"><div class="progress-fill" style="width:${pct}%;background:${pct>=75?'var(--green)':'var(--red)'}"></div></div>
+      <strong style="color:${pct>=75?'var(--green)':'var(--red)'};width:40px;text-align:right">${pct}%</strong>
+    </div>`).join('');
+  openModal(`${s.name} — ${s.id}`,`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+      <div style="background:var(--off);border-radius:8px;padding:14px">
+        <div style="font-size:0.7rem;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Department</div>
+        <div style="font-weight:700">${s.dept} — Year ${s.year}, Section ${s.section}</div>
+      </div>
+      <div style="background:var(--off);border-radius:8px;padding:14px">
+        <div style="font-size:0.7rem;color:var(--gray);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Face Registration</div>
+        <div style="font-weight:700;color:${s.face?'var(--green)':'var(--red)'}">${s.face?'✓ Registered':'✗ Pending'}</div>
+      </div>
+    </div>
+    <h4 style="font-family:'Playfair Display',serif;margin-bottom:12px;font-size:0.95rem;color:var(--navy)">Subject-wise Attendance</h4>
+    ${subRows}
+  `,'<button class="btn btn-ghost" onclick="closeModal()">Close</button>');
+}
+
+function showAddStudentModal() {
+  openModal('Add New Student',`
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Register Number</label><input class="form-input" id="ns-id" placeholder="e.g. 21CS060"></div>
+      <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="ns-name" placeholder="Full name"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Department</label>
+        <input class="form-input" id="ns-dept" list="dept-list" placeholder="e.g. CSE">
+        <datalist id="dept-list"><option value="CSE"><option value="IT"><option value="ECE"><option value="EEE"><option value="MECH"><option value="CIVIL"></datalist>
+      </div>
+      <div class="form-group"><label class="form-label">Year</label><select class="form-select" id="ns-year"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+    </div>
+    <div class="form-group"><label class="form-label">Section</label><input class="form-input" id="ns-sec" placeholder="e.g. A"></div>
+  `,`<button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="addStudent()">Add Student</button>`);
+}
+
+async function addStudent() {
+  const id=document.getElementById('ns-id').value.trim();
+  const name=document.getElementById('ns-name').value.trim();
+  if(!id||!name){showToast('⚠️','Fill all fields','','warning');return;}
+  
+  const formData = new FormData();
+  formData.append('register_number', id);
+  formData.append('name', name);
+  formData.append('department', document.getElementById('ns-dept').value);
+  formData.append('year', parseInt(document.getElementById('ns-year').value));
+  formData.append('section', document.getElementById('ns-sec').value || 'A');
+
+  try {
+    const res = await fetch('/api/students', { method: 'POST', body: formData });
+    if(res.ok) {
+      closeModal(); showToast('✅','Student Added',`${name} added. Default password: 1234`,'success');
+      await fetchRealData();
+      loadTab('students');
+    } else {
+      const err = await res.json();
+      showToast('❌','Error',err.detail || 'Failed to add student','error');
+    }
+  } catch (e) {
+    showToast('❌','Error',e.message,'error');
+  }
+}
+
+async function deleteStudent(dbId) {
+  if(!confirm('Are you sure you want to delete this student?')) return;
+  try {
+    const res = await fetch(`/api/students/${dbId}`, { method: 'DELETE' });
+    if(res.ok) {
+      showToast('✅','Deleted','Student removed successfully','success');
+      await fetchRealData();
+      loadTab('students');
+    } else {
+      showToast('❌','Error','Failed to delete student','error');
+    }
+  } catch(e) {
+    showToast('❌','Error',e.message,'error');
+  }
+}
+
+function showUploadModal() {
+  openModal('Upload Student Data via Excel',`
+    <div style="border:2px dashed var(--gray-l);border-radius:10px;padding:40px;text-align:center;margin-bottom:16px">
+      <div style="font-size:2.5rem;margin-bottom:10px">📁</div>
+      <p style="font-weight:600;color:var(--navy);margin-bottom:4px">Drag & Drop Excel File</p>
+      <p style="font-size:0.8rem;color:var(--gray)">Supports .xlsx, .csv — Required columns: Name, RegNo, Dept, Year, Section</p>
+      <button class="btn btn-outline" style="margin-top:14px">Browse File</button>
+    </div>
+    <div style="background:var(--off);border-radius:8px;padding:12px;font-size:0.78rem;color:var(--gray)">
+      <strong style="color:var(--text)">Required columns:</strong> Register Number, Full Name, Department, Year, Section
+    </div>
+  `,`<button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="closeModal();showToast('✅','File Uploaded','45 students imported successfully','success')">Import Data</button>`);
+}
+
+/* ============================================================
+   TIMETABLE
+============================================================ */
+let currentTtKey = null;
+
+function renderTimetable() {
+  if (DB.currentRole === 'student') {
+    currentTtKey = `${DB.currentUser.dept}-${DB.currentUser.year}-${DB.currentUser.section}`;
+  } else if (!currentTtKey && Object.keys(DB.timetables).length > 0) {
+    currentTtKey = Object.keys(DB.timetables)[0];
+  }
+  
+  const ttData = DB.timetables[currentTtKey] || {};
+  const periods = ['P1\n8:00','P2\n9:00','P3\n10:00','P4\n11:00','P5\n11:50','P6\n12:40','P7\n1:30'];
+  const colors = {MA3354:'tt-gold',CS3351:'tt-blue',CS3352:'tt-green',CS3353:'tt-purple',CS3354:'tt-red',null:'tt-break'};
+  const days = ['DO1', 'DO2', 'DO3', 'DO4', 'DO5'];
+  const currentDO = DB.currentDayOrder; const currentPeriod = 4;
+
+  const header = `<tr><th style="text-align:left;padding:8px 12px">Day Order</th>${periods.map(p=>`<th>${p.replace('\n','<br><span style="font-weight:400;font-size:0.6rem">')}</span></th>`).join('')}</tr>`;
+
+  const bodyRows = days.map(do_=>{
+    const daySched = ttData[do_] || [null,null,null,null,null,null,null];
+    return `
+    <tr>
+      <td style="padding:6px 12px;font-weight:700;color:var(--navy);font-size:0.82rem;white-space:nowrap">📅 ${do_} ${do_===currentDO?'<span class="badge badge-gold" style="font-size:0.6rem;margin-left:4px">TODAY</span>':''}</td>
+      ${daySched.map((s,i)=>{
+        const sub = s ? s.sub : 'null';
+        const isNow = do_===currentDO && i===currentPeriod;
+        return `<td style="padding:4px"><div class="tt-cell ${colors[sub]||'tt-break'} ${isNow?'tt-current':''}">
+          <div class="subject">${s?(DB.subjectNames[s.sub]||s.sub).split(' ').slice(0,2).join(' '):'Break'}</div>
+          ${s?`<div class="room">${s.room}</div>`:''}
+        </div></td>`;
+      }).join('')}
+    </tr>`;
+  }).join('');
+
+  const subjectLegend = Object.entries(DB.subjectNames).filter(([k])=>k!=='null').map(([code,name])=>`
+    <div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--gray-l)">
+      <span class="badge ${colors[code]||''}" style="font-size:0.7rem;width:80px;justify-content:center">${code}</span>
+      <span style="font-size:0.82rem">${name}</span>
+    </div>`).join('');
+
+  return `<div class="content-area">
+    <div class="breadcrumb"><span>🏠 Home</span><span class="breadcrumb-sep">›</span><strong>Timetable</strong></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px">
+      <div><h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--navy)">Time Table</h2><p style="color:var(--gray);font-size:0.85rem">${currentTtKey || 'No Timetable Selected'}</p></div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        ${DB.currentRole !== 'student' ? `
+          <select class="form-select" style="width:140px" onchange="currentTtKey=this.value;loadTab('timetable')">
+            ${Object.keys(DB.timetables).map(k=>`<option value="${k}" ${k===currentTtKey?'selected':''}>${k}</option>`).join('')}
+            <option value="NEW">+ New Dept TT</option>
+          </select>
+          <button class="btn btn-primary" onclick="editTimetable()">✏️ Edit</button>
+        ` : ''}
+        <button class="btn btn-gold" onclick="showToast('📤','Exported','Timetable PDF downloaded','success')">📤 Export PDF</button>
+      </div>
+    </div>
+    <div class="panel" style="margin-bottom:20px">
+      <div class="panel-header">
+        <div class="panel-title">Weekly Schedule</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          ${DB.currentRole !== 'student' ? `
+            <span style="font-size:0.75rem;color:var(--gray)">Set Day Order:</span>
+            <select class="form-select" style="padding:2px 8px;font-size:0.75rem;min-height:auto" onchange="DB.currentDayOrder=this.value;loadTab('timetable')">
+              ${days.map(d=>`<option ${d===currentDO?'selected':''}>${d}</option>`).join('')}
+            </select>
+          ` : `<span class="badge badge-gold">Current: ${currentDO} · P5</span>`}
+        </div>
+      </div>
+      <div class="panel-body" style="padding:16px;overflow-x:auto">
+        <table class="tt-table"><thead>${header}</thead><tbody>${bodyRows}</tbody></table>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">Subject Legend</div></div>
+      <div class="panel-body" style="padding:8px 20px;display:grid;grid-template-columns:1fr 1fr;gap:0 24px">${subjectLegend}</div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   OD / LEAVE
+============================================================ */
+function renderOD() {
+  const isAdmin = DB.currentRole !== 'student';
+  if (isAdmin) {
+    const rows = DB.pendingOD.map(o=>`
+      <tr id="od-row-${o.id}">
+        <td><strong>${o.name}</strong></td>
+        <td><span class="badge badge-navy">${o.studentId}</span></td>
+        <td>${o.dept}-${o.section}</td>
+        <td><span class="badge ${o.type==='OD'?'badge-blue':'badge-gold'}">${o.type}</span></td>
+        <td style="font-size:0.78rem;color:var(--gray)">${o.reason.substring(0,40)}...</td>
+        <td>${o.date}</td>
+        <td>
+          <button class="btn btn-sm btn-green" onclick="approveOD(${o.id})">✓ Approve</button>
+          <button class="btn btn-sm btn-red" style="margin-left:4px" onclick="rejectOD(${o.id})">✗ Reject</button>
+        </td>
+      </tr>`).join('');
+
+    return `<div class="content-area">
+      <div class="breadcrumb"><span>🏠 Home</span><span class="breadcrumb-sep">›</span><strong>OD / Leave Management</strong></div>
+      <div style="margin-bottom:24px;display:flex;justify-content:space-between;align-items:center">
+        <div><h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--navy)">OD / Leave Requests</h2></div>
+        <span class="badge badge-absent" style="font-size:0.85rem;padding:6px 14px">${DB.pendingOD.length} Pending</span>
+      </div>
+      <div class="panel">
+        <div class="panel-body" style="padding:0;overflow-x:auto">
+          <table class="data-table"><thead><tr><th>Student</th><th>ID</th><th>Dept</th><th>Type</th><th>Reason</th><th>Date</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table>
+        </div>
+      </div>
+    </div>`;
+  } else {
+    return `<div class="content-area">
+      <div class="breadcrumb"><span>🏠 Home</span><span class="breadcrumb-sep">›</span><strong>Apply OD / Leave</strong></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">New Application</div></div>
+          <div class="panel-body">
+            <div class="form-group">
+              <label class="form-label">Request Type</label>
+              <select class="form-select" id="odType"><option value="OD">OD (On-Duty)</option><option value="Leave">Medical / Personal Leave</option></select>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">From Date</label><input class="form-input" id="odDate" type="date" value="2026-04-22"></div>
+              <div class="form-group"><label class="form-label">To Date</label><input class="form-input" type="date" value="2026-04-22"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Reason</label>
+              <textarea class="form-input" id="odReason" rows="3" placeholder="Describe the reason for OD/Leave..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Supporting Document</label>
+              <div style="border:2px dashed var(--gray-l);border-radius:8px;padding:20px;text-align:center;font-size:0.82rem;color:var(--gray)">📎 Attach document (optional)</div>
+            </div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="submitOD()">Submit Application</button>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">My Applications</div></div>
+          <div class="panel-body" style="padding:0">
+            <table class="data-table">
+              <thead><tr><th>Type</th><th>Date</th><th>Status</th></tr></thead>
+              <tbody>
+                ${DB.pendingOD.filter(o=>o.studentId===DB.currentUser.id).map(o=>`<tr><td><span class="badge ${o.type==='OD'?'badge-blue':'badge-gold'}">${o.type}</span></td><td>${o.date}</td><td><span class="badge badge-od">⏳ ${o.status}</span></td></tr>`).join('') || '<tr><td colspan="3" style="text-align:center;padding:16px;color:var(--gray)">No applications found</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
+function approveOD(id, btnEl) {
+  DB.pendingOD = DB.pendingOD.filter(o=>o.id!==id);
+  const row = document.getElementById(`od-row-${id}`);
+  if(row){row.style.opacity='0';row.style.transition='opacity 0.3s';setTimeout(()=>row.remove(),300);}
+  showToast('✅','Approved','OD/Leave request approved','success');
+}
+function rejectOD(id, btnEl) {
+  DB.pendingOD = DB.pendingOD.filter(o=>o.id!==id);
+  const row = document.getElementById(`od-row-${id}`);
+  if(row){row.style.opacity='0';row.style.transition='opacity 0.3s';setTimeout(()=>row.remove(),300);}
+  showToast('❌','Rejected','OD/Leave request rejected','error');
+}
+function submitOD() {
+  const type = document.getElementById('odType').value;
+  const date = document.getElementById('odDate').value;
+  const reason = document.getElementById('odReason').value.trim();
+  if(!reason) { showToast('⚠️','Missing Info','Please provide a reason','warning'); return; }
+  
+  DB.pendingOD.push({
+    id: Date.now(),
+    studentId: DB.currentUser.id,
+    name: DB.currentUser.name,
+    dept: DB.currentUser.dept,
+    section: DB.currentUser.section,
+    type: type,
+    reason: reason,
+    date: date,
+    status: 'Pending'
+  });
+  
+  showToast('✅','Submitted','Your OD/Leave request has been submitted','success');
+  loadTab('od');
+}
+
+/* ============================================================
+   REPORTS
+============================================================ */
+function renderReports() {
+  return `<div class="content-area">
+    <div class="breadcrumb"><span>🏠 Home</span><span class="breadcrumb-sep">›</span><strong>Reports</strong></div>
+    <div style="margin-bottom:24px">
+      <h2 style="font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--navy)">Attendance Reports</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:24px">
+      ${[['📅 Daily Report','Attendance for a specific date','btn-primary',()=>showToast('📤','Generating','Daily report PDF downloading','success')],
+         ['📆 Weekly Report','7-day attendance summary','btn-outline',()=>showToast('📤','Generating','Weekly report ready','success')],
+         ['🗓️ Monthly Report','Monthly analysis with trends','btn-gold',()=>showToast('📤','Generating','Monthly report downloading','success')]
+      ].map(([title,desc,cls,fn])=>`
+      <div class="panel" style="text-align:center;padding:28px">
+        <div style="font-size:2rem;margin-bottom:10px">${title.split(' ')[0]}</div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:0.95rem;color:var(--navy);margin-bottom:6px">${title.split(' ').slice(1).join(' ')}</h3>
+        <p style="font-size:0.78rem;color:var(--gray);margin-bottom:16px">${desc}</p>
+        <button class="btn ${cls}" onclick="this.closest('.panel').style.opacity='0.5';setTimeout(()=>{this.closest('.panel').style.opacity='1';showToast('📤','Done','Report generated','success')},1500)">Generate PDF</button>
+      </div>`).join('')}
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Generate Custom Report</div>
+      </div>
+      <div class="panel-body">
+        <div class="form-row" style="margin-bottom:16px">
+          <div class="form-group"><label class="form-label">Department</label><select class="form-select"><option>All</option><option>CSE</option><option>IT</option><option>ECE</option><option>EEE</option></select></div>
+          <div class="form-group"><label class="form-label">Year & Section</label><select class="form-select"><option>All</option><option>Year 3 - B</option><option>Year 3 - A</option></select></div>
+          <div class="form-group"><label class="form-label">From Date</label><input class="form-input" type="date" value="2026-04-01"></div>
+          <div class="form-group"><label class="form-label">To Date</label><input class="form-input" type="date" value="2026-04-22"></div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="showToast('📤','Generating','Custom PDF report downloading...','success')">📄 Export as PDF</button>
+          <button class="btn btn-gold" onclick="showToast('📊','Generating','Excel file downloading...','success')">📊 Export as Excel</button>
+          <button class="btn btn-ghost">👁 Preview</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   MY ATTENDANCE (Student)
+============================================================ */
+function renderMyAttendance() {
+  const u = DB.currentUser;
+  const subRows = Object.entries(u.attendance.subjects).map(([sub,pct])=>`
+    <tr>
+      <td><strong>${DB.subjectNames[sub]||sub}</strong></td>
+      <td style="font-family:monospace;color:var(--gray)">${sub}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="progress-wrap" style="width:100px"><div class="progress-fill" style="width:${pct}%;background:${pct>=75?'var(--green)':'var(--red)'}"></div></div>
+          <strong style="color:${pct>=75?'var(--green)':'var(--red)'}">${pct}%</strong>
+        </div>
+      </td>
+      <td><span class="badge ${pct>=75?'badge-present':'badge-absent'}">${pct>=75?'✓ Safe':'⚠ At Risk'}</span></td>
+      <td style="font-size:0.78rem;color:var(--gray)">
+        ${pct<75?`Need ${Math.ceil((0.75*100-pct*0.6)/0.25)} more classes`:'Sufficient'}
+      </td>
+    </tr>`).join('');
+
+  return `<div class="content-area">
+    <div class="breadcrumb"><span>🏠 Home</span><span class="breadcrumb-sep">›</span><strong>My Attendance</strong></div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-icon-wrap">📊</div>
+        <div class="stat-num">${u.attendance.overall}%</div>
+        <div class="stat-label">Overall Attendance</div>
+        <div class="stat-trend">${u.attendance.overall>=75?'<span class="trend-up">Above threshold</span>':'<span class="trend-down">Below 75% — Risk</span>'}</div>
+      </div>
+      <div class="stat-box green-a">
+        <div class="stat-icon-wrap">✅</div>
+        <div class="stat-num">${Math.round(u.attendance.overall*0.01*120)}</div>
+        <div class="stat-label">Classes Attended</div>
+        <div class="stat-trend">out of 120 total</div>
+      </div>
+      <div class="stat-box red-a">
+        <div class="stat-icon-wrap">❌</div>
+        <div class="stat-num">${120-Math.round(u.attendance.overall*0.01*120)}</div>
+        <div class="stat-label">Classes Missed</div>
+        <div class="stat-trend">including OD / Leave</div>
+      </div>
+      <div class="stat-box gold-a">
+        <div class="stat-icon-wrap">📋</div>
+        <div class="stat-num">${Math.max(0,Math.ceil(90-u.attendance.overall))}</div>
+        <div class="stat-label">Classes Needed</div>
+        <div class="stat-trend">to reach 90% overall</div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">Subject-wise Attendance — ${u.name}</div>
+        <span class="badge badge-navy">${u.id} · ${u.dept}-${u.section}</span>
+      </div>
+      <div class="panel-body" style="padding:0;overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>Subject</th><th>Code</th><th>Attendance</th><th>Status</th><th>Remark</th></tr></thead>
+          <tbody>${subRows}</tbody>
+        </table>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ============================================================
+   FACE REGISTER (Student)
+============================================================ */
+let capturedAngles = 0;
+const angleNames = ['Front','Left','Right','Up','Down','Smile'];
+
+function renderFaceRegister() {
+  const u = DB.currentUser;
+  const slots = angleNames.map((a,i)=>`
+    <div class="face-slot ${u.face && i<6?'captured':''}" id="fslot-${i}">
+      <span class="slot-num">${u.face && i<6?'✓':'0'+( i+1)}</span>
+      <span style="font-size:0.65rem;color:var(--gray)">${a}</span>
+    </div>`).join('');
+
+  return `<div class="content-area">
+    <div class="breadcrumb"><span>🏠 Home</span><span class="breadcrumb-sep">›</span><strong>Face Registration</strong></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">📸 Face Capture Station</div></div>
+        <div class="panel-body">
+          <div style="background:#060810;border-radius:var(--r);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;position:relative;margin-bottom:16px;overflow:hidden">
+            <video id="webcamVideo" autoplay muted style="width:100%;height:100%;object-fit:cover;"></video>
+            <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:160px;height:180px;border:2px solid rgba(5,150,105,0.5);border-radius:50% 50% 50% 50%/60% 60% 40% 40%;animation:faceOvalPulse 2s ease infinite;"></div>
+            <div style="position:absolute;bottom:12px;width:100%;text-align:center;font-size:0.75rem;color:rgba(255,255,255,0.5)" id="faceInstruction">Position your face inside the oval</div>
+          </div>
+          <div class="face-reg-grid" id="faceSlots">${slots}</div>
+          <div style="margin:16px 0">
+            <div style="display:flex;justify-content:space-between;font-size:0.78rem;color:var(--gray);margin-bottom:6px">
+              <span>Progress</span><span id="faceProgress">${u.face?6:0}/6 angles captured</span>
+            </div>
+            <div class="progress-wrap"><div class="progress-fill" id="faceProgressBar" style="width:${u.face?100:0}%"></div></div>
+          </div>
+          ${u.face
+            ? `<div style="background:var(--green-l);border-radius:8px;padding:14px;text-align:center;color:var(--green);font-weight:700">✅ Face Already Registered — AI Attendance Active</div>`
+            : `<button class="btn btn-primary" style="width:100%;justify-content:center;padding:12px" id="captureBtn" onclick="captureNextAngle()">📸 Capture — ${angleNames[0]}</button>`
+          }
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">How Face Registration Works</div></div>
+          <div class="panel-body">
+            ${[['📸','Capture 6 Face Angles','Front, Left, Right, Up, Down, and a Smile view'],
+               ['🔢','Generate Embeddings','FaceNet creates a 128-dim facial embedding vector'],
+               ['💾','Secure Storage','Embeddings stored encrypted — no raw images saved'],
+               ['🤖','AI Recognition','Camera matches live faces against your embedding'],
+               ['✅','Auto Attendance','Attendance marked automatically when you enter class']
+              ].map(([icon,title,desc])=>`
+              <div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--gray-l);align-items:flex-start">
+                <div style="width:36px;height:36px;background:var(--off);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0">${icon}</div>
+                <div><div style="font-weight:700;font-size:0.85rem;margin-bottom:2px">${title}</div><div style="font-size:0.75rem;color:var(--gray)">${desc}</div></div>
+              </div>`).join('')}
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Security & Privacy</div></div>
+          <div class="panel-body">
+            <p style="font-size:0.82rem;color:var(--gray);line-height:1.7">Your face images are <strong>never stored</strong>. Only mathematical vectors (embeddings) are saved, encrypted with AES-256. Facial data is used solely for attendance and cannot be reverse-engineered to reconstruct your face.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+let videoStream = null;
+let capturedBlobs = [];
+
+function initWebcam() {
+  const videoEl = document.getElementById('webcamVideo');
+  if(!videoEl) return;
+  navigator.mediaDevices.getUserMedia({video: true})
+    .then(stream => { videoStream = stream; videoEl.srcObject = stream; })
+    .catch(err => { showToast('❌', 'Camera Error', 'Could not access webcam. Please allow permissions.', 'error'); });
+}
+
+function stopWebcam() {
+  if(videoStream) { videoStream.getTracks().forEach(t=>t.stop()); videoStream=null; }
+}
+
+function initFaceReg() {
+  capturedAngles = DB.currentUser.face ? 6 : 0;
+  if (!DB.currentUser.face) initWebcam();
+}
+
+function captureNextAngle() {
+  if (capturedAngles >= 6) return;
+  
+  const videoEl = document.getElementById('webcamVideo');
+  if (!videoEl || !videoEl.videoWidth) {
+    showToast('⚠️', 'Wait', 'Camera is still loading', 'warning');
+    return;
+  }
+  
+  const canvas = document.createElement('canvas');
+  canvas.width = videoEl.videoWidth;
+  canvas.height = videoEl.videoHeight;
+  canvas.getContext('2d').drawImage(videoEl, 0, 0);
+  
+  canvas.toBlob(blob => {
+    capturedBlobs.push(blob);
+    
+    const slot = document.getElementById(`fslot-${capturedAngles}`);
+    if (slot) { slot.classList.add('captured'); slot.querySelector('.slot-num').textContent = '✓'; }
+    capturedAngles++;
+    const progress = document.getElementById('faceProgress');
+    const bar = document.getElementById('faceProgressBar');
+    const btn = document.getElementById('captureBtn');
+    if (progress) progress.textContent = `${capturedAngles}/6 angles captured`;
+    if (bar) bar.style.width = `${Math.round(capturedAngles/6*100)}%`;
+    if (capturedAngles < 6) {
+      if (btn) btn.textContent = `📸 Capture — ${angleNames[capturedAngles]}`;
+      showToast('📸','Captured',`${angleNames[capturedAngles-1]} angle saved`,'success');
+    } else {
+      if (btn) { btn.textContent = '✅ Submitting...'; btn.disabled = true; btn.style.background='var(--green)'; }
+      submitFaces();
+    }
+  }, 'image/jpeg');
+}
+
+async function submitFaces() {
+  showToast('🔄', 'Uploading', 'Registering face with AI...', 'info');
+  const fd = new FormData();
+  capturedBlobs.forEach((b, i) => fd.append('photos', b, `face_${i}.jpg`));
+  
+  try {
+    const res = await fetch(`/api/students/${DB.currentUser.dbId}/face`, {
+      method: 'POST',
+      body: fd
+    });
+    if(res.ok) {
+      showToast('✅', 'Success', 'Face registered successfully!', 'success');
+      DB.currentUser.face = true;
+      stopWebcam();
+      setTimeout(()=>loadTab('dashboard'), 2000);
+    } else {
+      const err = await res.json();
+      showToast('❌', 'Error', err.detail || 'Failed to register face', 'error');
+      capturedAngles = 0; capturedBlobs = [];
+      document.querySelectorAll('.face-slot').forEach(s => {s.classList.remove('captured');});
+      const btn = document.getElementById('captureBtn');
+      if(btn) { btn.disabled = false; btn.textContent = `📸 Capture — ${angleNames[0]}`; btn.style.background=''; }
+    }
+  } catch (e) {
+    showToast('❌', 'Error', e.message, 'error');
+  }
+}
+
+function promptPasswordChange(dbId) {
+  openModal('Set New Password', `
+    <p style="margin-bottom:12px;font-size:0.9rem;">As this is your first login, please set a new password.</p>
+    <div class="form-group"><label class="form-label">New Password</label><input class="form-input" id="newPwd1" type="password"></div>
+    <div class="form-group"><label class="form-label">Confirm Password</label><input class="form-input" id="newPwd2" type="password"></div>
+  `, `<button class="btn btn-primary" onclick="submitNewPassword(${dbId})">Change Password</button>`);
+}
+
+async function submitNewPassword(dbId) {
+  const p1 = document.getElementById('newPwd1').value;
+  const p2 = document.getElementById('newPwd2').value;
+  if (!p1 || p1 !== p2) { showToast('⚠️', 'Error', 'Passwords must match and not be empty.', 'warning'); return; }
+  
+  try {
+    const res = await fetch(`/api/students/${dbId}/password`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: p1 })
+    });
+    if (res.ok) {
+      closeModal();
+      showToast('✅', 'Success', 'Password changed. Proceeding to dashboard.', 'success');
+      DB.currentUser.firstLogin = false;
+      DB.currentUser.pwd = p1;
+      loadApp();
+    } else {
+      showToast('❌', 'Error', 'Failed to change password.', 'error');
+    }
+  } catch (e) {
+    showToast('❌', 'Error', e.message, 'error');
+  }
+}
+
+function editTimetable() {
+  let ttData = {};
+  if (currentTtKey && currentTtKey !== 'NEW' && DB.timetables[currentTtKey]) {
+    ttData = DB.timetables[currentTtKey];
+  } else {
+    ttData = {
+      'DO1': [null,null,null,null,null,null,null],
+      'DO2': [null,null,null,null,null,null,null],
+      'DO3': [null,null,null,null,null,null,null],
+      'DO4': [null,null,null,null,null,null,null],
+      'DO5': [null,null,null,null,null,null,null]
+    };
+  }
+
+  openModal('Edit Timetable (JSON)', `
+    <div class="form-group">
+      <label class="form-label">Timetable Key (e.g. Dept-Year-Section)</label>
+      <input type="text" id="tt-key-input" class="form-input" value="${currentTtKey === 'NEW' ? '' : currentTtKey}" placeholder="e.g. AI&DS-1-A">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Raw Timetable JSON</label>
+      <textarea id="tt-json" class="form-input" rows="10" style="font-family:monospace;font-size:0.8rem;">${JSON.stringify(ttData, null, 2)}</textarea>
+    </div>
+  `, `<button class="btn btn-ghost" onclick="closeModal()">Cancel</button><button class="btn btn-primary" onclick="saveTimetable()">Save Changes</button>`);
+}
+
+function saveTimetable() {
+  try {
+    const key = document.getElementById('tt-key-input').value.trim();
+    if (!key) { showToast('⚠️', 'Error', 'Please provide a valid key', 'warning'); return; }
+    
+    const newTt = JSON.parse(document.getElementById('tt-json').value);
+    DB.timetables[key] = newTt;
+    currentTtKey = key;
+    
+    closeModal();
+    showToast('✅', 'Saved', 'Timetable updated successfully', 'success');
+    loadTab('timetable');
+  } catch (e) {
+    showToast('❌', 'Invalid JSON', 'Please correct the JSON format', 'error');
+  }
+}
+
+/* ============================================================
+   HELPERS
+============================================================ */
+function getGreeting() {
+  const h = new Date().getHours();
+  if(h<12) return 'Morning'; if(h<17) return 'Afternoon'; return 'Evening';
+}
+
+function openModal(title, body, footer='') {
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('modalBody').innerHTML = body;
+  document.getElementById('modalFooter').innerHTML = footer || '<button class="btn btn-ghost" onclick="closeModal()">Close</button>';
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+document.getElementById('modalOverlay').addEventListener('click', function(e){ if(e.target===this) closeModal(); });
+
+function showToast(icon, title, sub, type='') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<div class="toast-icon">${icon}</div><div class="toast-body"><strong>${title}</strong><span>${sub}</span></div>`;
+  c.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(20px)';t.style.transition='all 0.4s';setTimeout(()=>t.remove(),400);}, 3200);
+}
+
+function scrollToFeatures() { document.getElementById('features-section').scrollIntoView({behavior:'smooth'}); }
+
+/* ============================================================
+   LOADER INIT
+============================================================ */
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{
+    const loader = document.getElementById('pg-loader');
+    loader.style.opacity='0';
+    setTimeout(()=>{ loader.style.display='none'; showPage('pg-home'); }, 500);
+  }, 3200);
+});
+</script>
+<style>
+@keyframes faceOvalPulse{0%,100%{border-color:rgba(5,150,105,0.5)}50%{border-color:rgba(5,150,105,0.9)}}
+</style>
+</body>
+</html>

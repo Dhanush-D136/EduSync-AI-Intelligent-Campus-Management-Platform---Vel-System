@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  /* Premium Matte Colors */
+  --color-matte-blue-900: #101827; /* Deepest blue/black matte */
+  --color-matte-blue-800: #1E293B; /* Secondary matte blue */
+  --color-matte-blue-700: #334155; 
+  
+  --color-matte-gold-400: #D4AF37;
+  --color-matte-gold-500: #C5A059; /* Soft muted gold */
+  
+  --color-matte-silver-300: #CBD5E1;
+  --color-matte-silver-400: #94A3B8; /* Classic matte silver */
+  --color-matte-silver-500: #64748B;
+  
+  --color-matte-emerald-500: #059669; /* Muted matte green */
+
+  --font-sans: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  
+  --shadow-matte: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-soft: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+  
+  body {
+    @apply bg-matte-blue-900 text-matte-silver-300 font-sans;
+    /* pure flat background, no shiny radial gradients to respect matte finish */
+  }
+}
+
+/* Matte Flat Panels instead of shiny Glass */
+.glass-panel {
+  @apply bg-matte-blue-800 border border-matte-blue-700 rounded-2xl;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease-in-out;
+}
+
+.glass-panel:hover {
+  @apply border-matte-silver-500;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+}
+
+.glass-panel-light {
+  @apply bg-matte-blue-800 rounded-2xl;
+}
+
+.premium-gradient-text {
+  /* Matte gold text */
+  color: #C5A059;
+}
+
+
+
+.premium-gradient-text {
+  background: linear-gradient(to right, #D4AF37, #FBBF24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
